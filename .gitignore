@@ -1,0 +1,12 @@
+.env
+.env.local
+*.env
+!.env.example
+.purrfectclaw/
+node_modules/
+agent/.cache/
+agent/dist/
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+.DS_Store
