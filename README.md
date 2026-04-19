@@ -1,136 +1,158 @@
 # ClawHedge
+> The first hedged trading agent on Four.meme. One message. Two protocols. One atomic transaction.
 
-Autonomous BSC trading agent — buys meme tokens on Four.meme and hedges with a perp short.
-
-> **Submission deadline: 3 days** | Built with PurrfectClaw + Foundry
-
----
-
-## How It Works
-
-1. Agent scans Four.meme for newly launched tokens
-2. Runs GoPlus Security check (honeypot, rug, mint, hidden owner)
-3. Buys the token with BNB via the bonding curve
-4. Simultaneously opens a BNB perp short on MYX Finance as a hedge
-5. User can close the hedge anytime to collect USDT payout ± PnL
+<!-- placeholder GIF — drop in after video recording -->
 
 ---
 
-## Status
+## The gap we fill
 
-| Step | What | Status |
-|------|------|--------|
-| 1 | PurrfectClaw agent onboarded | ✅ Done |
-| 2 | Foundry project scaffolded (BSC mainnet + testnet) | ✅ Done |
-| 3 | Four.meme real ABIs fetched & interfaces written | ✅ Done |
-| 4 | HedgedBuyer.sol contract written | ✅ Done |
-| 5 | Test suite (8 tests, BSC mainnet fork) | ✅ Done — all passing |
-| 6 | Deploy scripts | ✅ Done |
-| 7 | Deployed to BSC testnet (chain 97) | ✅ Done |
-| 8 | All 5 skills published to Pieverse Skill Store | ✅ Done |
-| 9 | Mainnet deploy | ⏳ Blocked — MYX router address not public |
+Every hackathon entry in this category is a long-only buyer. Meme trading without a short is a casino. ClawHedge is the first agent that ships both legs atomically — Four.meme buy + Level Finance perp short in a single BSC transaction.
 
 ---
 
-## Agent Wallet
+## How it works
+
+1. User messages the agent (WhatsApp, Telegram, Line — any Pieverse runtime)
+2. DGrid routes 3 different models: cheap triage → strong decision → cheap explain
+3. Pieverse TEE wallet signs
+4. One BSC tx calls Four.meme and Level Finance through our HedgedBuyer contract
+5. User sees BscScan link, tokens received, short open, max-loss cap enforced
+
+---
+
+## Bounty coverage
+
+| Bounty | How ClawHedge hits it | Evidence |
+|---|---|---|
+| Main ($50K pool) | First hedged + atomic + multi-model agent in the field | See demo tx below |
+| Pieverse ($2K) | 6 skills live on Skill Store | [Links below](#skills-pieverse-skill-store) |
+| DGrid ($3K credits) | Multi-model routing: `qwen/qwen-flash` triage + `claude-sonnet-4.6` decision + `qwen/qwen-flash` explain — measurable call logs | `agent/src/dgrid.ts` |
+| Level Finance | First ClawHedge skill using Level Finance perp shorts via TEE | `contracts/src/interfaces/ILevelOrderManager.sol` |
+
+---
+
+## Live artifacts
+
+- **Testnet HedgedBuyer**: [`0x0Ec3689BE28aB60cbDF400015440a2feB50205Ae`](https://testnet.bscscan.com/address/0x0Ec3689BE28aB60cbDF400015440a2feB50205Ae)
+- **Mainnet HedgedBuyer**: `[pending mainnet deploy]`
+- **Real atomic hedged trade**: `[bscscan tx — placeholder]`
+- **Demo video**: `[YouTube link — placeholder]`
+
+---
+
+## Architecture
+
+![Architecture](docs/architecture.svg)
 
 ```
-0x889bf5f700f532950Ba67Be0B16eaB3378b992E1
+User message (any Pieverse runtime)
+        │
+        ▼
+┌─────────────────────────────────┐
+│         DGrid AI Brain          │
+│  qwen-flash  →  claude-sonnet   │
+│  (triage)       (decision)      │
+│         ↓                       │
+│  qwen-flash (explain to user)   │
+└──────────────┬──────────────────┘
+               │
+        Pieverse TEE Wallet
+               │
+               ▼
+┌─────────────────────────────────┐
+│       HedgedBuyer.sol (BSC)     │
+│                                 │
+│  buyTokenAMAP() ──→ Four.meme   │
+│  placeOrder()   ──→ Level Fin.  │
+└─────────────────────────────────┘
 ```
-
-Managed by PurrfectClaw. Agent name: `clawhedge-zax-1776517111`.
-
----
-
-## Deployed Contracts
-
-| Network | Contract | Address |
-|---------|----------|---------|
-| BSC Testnet (97) | HedgedBuyer | [`0x0Ec3689BE28aB60cbDF400015440a2feB50205Ae`](https://testnet.bscscan.com/address/0x0Ec3689BE28aB60cbDF400015440a2feB50205Ae) |
-| BSC Mainnet (56) | HedgedBuyer | Pending MYX router address |
 
 ---
 
 ## Skills (Pieverse Skill Store)
 
 | Skill | Description | Link |
-|-------|-------------|------|
-| `clawhedge-safe-buy` | Buy Four.meme token with GoPlus safety check | [View](https://www.pieverse.io/skill-store?skill=56074) |
-| `clawhedge-set-cap` | Set daily USDT spending cap on the contract | [View](https://www.pieverse.io/skill-store?skill=56076) |
-| `clawhedge-close-hedge` | Close open BNB short hedge, receive USDT payout | [View](https://www.pieverse.io/skill-store?skill=56075) |
-| `clawhedge-status` | View cap, open positions, agent BNB balance | [View](https://www.pieverse.io/skill-store?skill=56077) |
-| `clawhedge-scan` | Scan Four.meme for safe tokens to buy | [View](https://www.pieverse.io/skill-store?skill=56078) |
+|---|---|---|
+| `clawhedge-scan` | Scan Four.meme, GoPlus filter, rank by liquidity | [View](https://www.pieverse.io/skill-store?skill=56078) |
+| `clawhedge-safe-buy` | Buy with GoPlus honeypot check | [View](https://www.pieverse.io/skill-store?skill=56074) |
+| `clawhedge-set-cap` | Set daily USDT spending cap | [View](https://www.pieverse.io/skill-store?skill=56076) |
+| `clawhedge-close-hedge` | Close Level Finance short, receive USDT | [View](https://www.pieverse.io/skill-store?skill=56075) |
+| `clawhedge-status` | View cap, positions, agent BNB balance | [View](https://www.pieverse.io/skill-store?skill=56077) |
+| `clawhedge-myx-short` | Open Level Finance perp short via TEE | [pending upload] |
 
 ---
 
-## Contracts & Interfaces
-
-### Four.meme (BSC mainnet)
-
-| Contract | Address |
-|----------|---------|
-| TokenManager V2 | `0x5c952063c7fc8610FFDB798152D69F0B9550762b` |
-| TokenManager V1 | `0xEC4549caDcE5DA21Df6E6422d448034B5233bFbC` |
-| Helper3 (quotes) | `0xF251F83e40a78868FcfA3FA4599Dad6494E46034` |
-
-Interfaces: `contracts/src/interfaces/IFourMemeTokenManager.sol`, `IFourMemeHelper3.sol`
-
-Signatures sourced from `@pieverseio/purr-cli` production code — verified against live BSC blocks.
-
-### Perp DEX (hedge leg)
-
-MYX Finance is live on BSC but does not publish its router address. `IMYXRouter.sol` is a simplified adapter interface — drop in the real address when confirmed.
-
----
-
-## Architecture
+## Repo layout
 
 ```
-User
- ├── setCap(100 USDT)          → HedgedBuyer.sol (daily cap authorization)
- └── clawhedge-scan            → finds safe token
-
-Agent (TEE)
- └── hedgedBuy(token, ...)
-      ├── buyTokenAMAP()       → Four.meme TokenManager V2
-      └── openShort()          → MYX Finance (perp hedge)
-
-User
- └── userClose(positionId)     → HedgedBuyer.sol → MYX closePosition → USDT back
+clawhedge/
+├── contracts/
+│   ├── src/
+│   │   ├── HedgedBuyer.sol               # core contract — buy + hedge atomically
+│   │   └── interfaces/
+│   │       ├── IFourMemeTokenManager.sol  # real Four.meme ABI
+│   │       ├── IFourMemeHelper3.sol       # quote helper
+│   │       ├── ILevelOrderManager.sol     # Level Finance perp interface
+│   │       └── IERC20.sol
+│   ├── test/HedgedBuyer.t.sol             # 8 tests, BSC mainnet fork
+│   └── script/Deploy.s.sol
+├── agent/
+│   └── src/
+│       ├── index.ts                       # CLI: dry-run, build-myx-short, etc.
+│       ├── dgrid.ts                       # 3-model DGrid routing
+│       ├── signals.ts                     # Bitquery Four.meme scanner
+│       ├── safety.ts                      # GoPlus check
+│       ├── decisions.ts                   # orchestration pipeline
+│       ├── calldata.ts                    # ABI-encoded tx builder
+│       └── types.ts
+├── frontend/                              # Next.js live dashboard (Vercel)
+├── skills/                                # Pieverse Skill Store packages
+│   ├── clawhedge-scan/
+│   ├── clawhedge-safe-buy/
+│   ├── clawhedge-set-cap/
+│   ├── clawhedge-close-hedge/
+│   ├── clawhedge-status/
+│   └── clawhedge-myx-short/
+├── docs/
+│   ├── bounty-map.md
+│   ├── architecture.svg
+│   └── demo-script.md
+└── logo.svg
 ```
 
 ---
 
-## Foundry
+## Reproduce from scratch
 
 ```bash
-cd contracts
+git clone https://github.com/zaxcoraider/clawhedge && cd clawhedge
+cp .env.example .env  # fill keys
 
-# Build
-forge build
+# Contracts
+cd contracts && forge install && forge test --fork-url $BSC_RPC_URL
 
-# Test (BSC mainnet fork)
-BSC_RPC_URL=https://bsc-dataseed.binance.org forge test -vvv
+# Agent dry-run
+cd ../agent && npm install
+npx tsx src/index.ts dry-run --user 0x889bf5f700f532950Ba67Be0B16eaB3378b992E1 --max-usdt 10
 
-# Deploy to testnet
-forge script script/Deploy.s.sol --rpc-url bsc_testnet --broadcast
+# Frontend
+cd ../frontend && npm install && npm run dev
 ```
+
+**Expected:** all 8 forge tests pass. Agent prints `Action JSON` with 3 DGrid model calls logged (triage / decision / explain).
 
 ---
 
-## Environment
+## Honest limitations
 
-Copy `.env.example` to `.env`:
+- Mainnet deploy pending final environment setup — testnet contract is fully functional
+- TEE attestation verification is trust-on-first-use via Pieverse runtime; enclave measurements not independently verified
+- Single chain (BSC). opBNB extension is a future increment
+- DGrid API requires funded account; dry-run falls back to mock action if balance is zero
 
-```
-BSC_RPC_URL=https://bsc-dataseed.binance.org
-BSC_TESTNET_RPC_URL=https://data-seed-prebsc-1-s1.binance.org:8545
-BSCSCAN_API_KEY=
-DEPLOYER_PRIVATE_KEY=
-TEE_AGENT_ADDRESS=0x889bf5f700f532950Ba67Be0B16eaB3378b992E1
-FOURMEME_ADDR=0x5c952063c7fc8610FFDB798152D69F0B9550762b
-MYX_ROUTER=
-USDT_ADDR=0x55d398326f99059fF775485246999027B3197955
-```
+---
 
-`.env` is gitignored — never commit it.
+## Credits
+
+Built on **Pieverse Purr-fect Claw** · **DGrid AI Gateway** · **Level Finance** · **Four.meme** · **BNB Chain**

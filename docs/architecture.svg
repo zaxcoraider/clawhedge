@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="900" height="520" font-family="'Courier New', monospace">
+  <defs>
+    <linearGradient id="goldG" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffe066"/>
+      <stop offset="100%" stop-color="#f0a500"/>
+    </linearGradient>
+    <linearGradient id="darkG" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#161b22"/>
+      <stop offset="100%" stop-color="#0d1117"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#f0a500"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="520" fill="#0a0c12"/>
+
+  <!-- Title -->
+  <text x="450" y="38" text-anchor="middle" fill="#f0a500" font-size="18" font-weight="bold" letter-spacing="4">CLAWHEDGE — ARCHITECTURE</text>
+  <line x1="60" y1="50" x2="840" y2="50" stroke="#21262d" stroke-width="1"/>
+
+  <!-- ── Box 1: User ── -->
+  <rect x="60" y="75" width="160" height="80" rx="10" fill="url(#darkG)" stroke="#f0a500" stroke-width="1.5"/>
+  <text x="140" y="105" text-anchor="middle" fill="#f0a500" font-size="13" font-weight="bold">USER</text>
+  <text x="140" y="122" text-anchor="middle" fill="#8b949e" font-size="10">WhatsApp / Telegram</text>
+  <text x="140" y="137" text-anchor="middle" fill="#8b949e" font-size="10">Line / any runtime</text>
+
+  <!-- Arrow 1→2 -->
+  <line x1="220" y1="115" x2="285" y2="115" stroke="#f0a500" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="252" y="109" text-anchor="middle" fill="#8b949e" font-size="9">message</text>
+
+  <!-- ── Box 2: DGrid Brain ── -->
+  <rect x="285" y="65" width="230" height="195" rx="10" fill="url(#darkG)" stroke="#3fb950" stroke-width="1.5"/>
+  <text x="400" y="90" text-anchor="middle" fill="#3fb950" font-size="13" font-weight="bold">DGRID AI BRAIN</text>
+  <line x1="300" y1="97" x2="500" y2="97" stroke="#21262d" stroke-width="1"/>
+
+  <!-- Model rows -->
+  <rect x="300" y="107" width="200" height="36" rx="6" fill="#0d1117" stroke="#21262d" stroke-width="1"/>
+  <text x="400" y="122" text-anchor="middle" fill="#8b949e" font-size="10" font-weight="bold">TRIAGE</text>
+  <text x="400" y="136" text-anchor="middle" fill="#e6edf3" font-size="9">qwen/qwen-flash · $0.05/M</text>
+
+  <text x="400" y="158" text-anchor="middle" fill="#f0a500" font-size="11">↓</text>
+
+  <rect x="300" y="165" width="200" height="36" rx="6" fill="#0d1117" stroke="#f0a500" stroke-width="1"/>
+  <text x="400" y="180" text-anchor="middle" fill="#f0a500" font-size="10" font-weight="bold">DECISION</text>
+  <text x="400" y="194" text-anchor="middle" fill="#e6edf3" font-size="9">claude-sonnet-4.6 · tool call</text>
+
+  <text x="400" y="216" text-anchor="middle" fill="#f0a500" font-size="11">↓</text>
+
+  <rect x="300" y="223" width="200" height="36" rx="6" fill="#0d1117" stroke="#21262d" stroke-width="1"/>
+  <text x="400" y="238" text-anchor="middle" fill="#8b949e" font-size="10" font-weight="bold">EXPLAIN</text>
+  <text x="400" y="252" text-anchor="middle" fill="#e6edf3" font-size="9">qwen/qwen-flash · 1 sentence</text>
+
+  <!-- Arrow 2→3 -->
+  <line x1="515" y1="162" x2="580" y2="162" stroke="#f0a500" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="547" y="155" text-anchor="middle" fill="#8b949e" font-size="9">Action</text>
+
+  <!-- ── Box 3: TEE Wallet ── -->
+  <rect x="580" y="120" width="180" height="80" rx="10" fill="url(#darkG)" stroke="#58a6ff" stroke-width="1.5"/>
+  <text x="670" y="148" text-anchor="middle" fill="#58a6ff" font-size="13" font-weight="bold">PIEVERSE TEE</text>
+  <text x="670" y="165" text-anchor="middle" fill="#8b949e" font-size="10">PurrfectClaw wallet</text>
+  <text x="670" y="180" text-anchor="middle" fill="#8b949e" font-size="10">0x889b…992E1</text>
+
+  <!-- Arrow 3→4 -->
+  <line x1="670" y1="200" x2="670" y2="270" stroke="#f0a500" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="690" y="240" fill="#8b949e" font-size="9">signed tx</text>
+
+  <!-- ── Box 4: HedgedBuyer Contract ── -->
+  <rect x="285" y="295" width="570" height="90" rx="10" fill="url(#darkG)" stroke="#f0a500" stroke-width="2"/>
+  <text x="570" y="320" text-anchor="middle" fill="#f0a500" font-size="13" font-weight="bold">HedgedBuyer.sol  ·  BSC Mainnet</text>
+  <line x1="300" y1="328" x2="840" y2="328" stroke="#21262d" stroke-width="1"/>
+
+  <!-- Two sub-boxes inside HedgedBuyer -->
+  <rect x="305" y="338" width="245" height="38" rx="6" fill="#0d1117" stroke="#3fb950" stroke-width="1"/>
+  <text x="427" y="354" text-anchor="middle" fill="#3fb950" font-size="10" font-weight="bold">buyTokenAMAP()</text>
+  <text x="427" y="369" text-anchor="middle" fill="#8b949e" font-size="9">Four.meme TokenManager V2</text>
+
+  <rect x="570" y="338" width="270" height="38" rx="6" fill="#0d1117" stroke="#e05c5c" stroke-width="1"/>
+  <text x="705" y="354" text-anchor="middle" fill="#e05c5c" font-size="10" font-weight="bold">placeOrder(INCREASE, SHORT)</text>
+  <text x="705" y="369" text-anchor="middle" fill="#8b949e" font-size="9">Level Finance OrderManager</text>
+
+  <!-- Arrow to Four.meme -->
+  <line x1="427" y1="377" x2="427" y2="430" stroke="#3fb950" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Arrow to Level Finance -->
+  <line x1="705" y1="377" x2="705" y2="430" stroke="#e05c5c" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ── Box 5a: Four.meme ── -->
+  <rect x="305" y="430" width="245" height="55" rx="8" fill="url(#darkG)" stroke="#3fb950" stroke-width="1"/>
+  <text x="427" y="454" text-anchor="middle" fill="#3fb950" font-size="12" font-weight="bold">Four.meme</text>
+  <text x="427" y="471" text-anchor="middle" fill="#8b949e" font-size="9">0x5c95…762b  ·  bonding curve</text>
+
+  <!-- ── Box 5b: Level Finance ── -->
+  <rect x="570" y="430" width="270" height="55" rx="8" fill="url(#darkG)" stroke="#e05c5c" stroke-width="1"/>
+  <text x="705" y="454" text-anchor="middle" fill="#e05c5c" font-size="12" font-weight="bold">Level Finance</text>
+  <text x="705" y="471" text-anchor="middle" fill="#8b949e" font-size="9">0xf584…Bb5b  ·  perp short</text>
+
+  <!-- Arrow: HedgedBuyer result back to user -->
+  <line x1="285" y1="340" x2="155" y2="340" stroke="#f0a500" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+  <line x1="155" y1="340" x2="155" y2="155" stroke="#f0a500" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <text x="95" y="260" fill="#8b949e" font-size="9" transform="rotate(-90,95,260)">BscScan tx + result</text>
+
+  <!-- Legend -->
+  <rect x="60" y="430" width="200" height="90" rx="8" fill="#0d1117" stroke="#21262d" stroke-width="1"/>
+  <text x="160" y="450" text-anchor="middle" fill="#8b949e" font-size="10" font-weight="bold">LEGEND</text>
+  <line x1="75" y1="465" x2="105" y2="465" stroke="#f0a500" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="115" y="469" fill="#8b949e" font-size="9">tx / action flow</text>
+  <line x1="75" y1="483" x2="105" y2="483" stroke="#f0a500" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+  <text x="115" y="487" fill="#8b949e" font-size="9">response / result</text>
+  <rect x="75" y="496" width="12" height="12" rx="2" fill="none" stroke="#3fb950" stroke-width="1"/>
+  <text x="95" y="507" fill="#8b949e" font-size="9">buy leg</text>
+  <rect x="135" y="496" width="12" height="12" rx="2" fill="none" stroke="#e05c5c" stroke-width="1"/>
+  <text x="155" y="507" fill="#8b949e" font-size="9">hedge leg</text>
+</svg>
