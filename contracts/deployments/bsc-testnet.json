@@ -1,0 +1,13 @@
+{
+  "chainId": 97,
+  "HedgedBuyer": "0x0Ec3689BE28aB60cbDF400015440a2feB50205Ae",
+  "txHash": "0x759d30f34e7043fca1d75714b931c99101620d34303b4253f45c176d6587a3f7",
+  "deployedAt": "2026-04-19T00:00:00.000Z",
+  "constructorArgs": {
+    "agent":     "0x889bf5f700f532950Ba67Be0B16eaB3378b992E1",
+    "fourMeme":  "0x0000000000000000000000000000000000000001",
+    "usdt":      "0x337610d27c682E347C9cD60BD4b3b107C9d34dDd",
+    "myxRouter": "0x0000000000000000000000000000000000000002"
+  },
+  "bscscan": "https://testnet.bscscan.com/address/0x0Ec3689BE28aB60cbDF400015440a2feB50205Ae"
+}
