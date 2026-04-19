@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+body {
+  background: #0a0c12;
+  color: #e6edf3;
+}
+
+@keyframes pulse-gold {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.animate-pulse-gold { animation: pulse-gold 2s ease-in-out infinite; }
+
+.gold-gradient {
+  background: linear-gradient(135deg, #ffe066, #f0a500, #c47c00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
