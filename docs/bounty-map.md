@@ -31,7 +31,7 @@
 - clawhedge-set-cap: https://www.pieverse.io/skill-store?skill=56076
 - clawhedge-close-hedge: https://www.pieverse.io/skill-store?skill=56075
 - clawhedge-status: https://www.pieverse.io/skill-store?skill=56077
-- clawhedge-myx-short: [pending upload]
+- clawhedge-level-short: https://www.pieverse.io/skill-store?skill=56079
 
 ---
 

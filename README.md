@@ -79,7 +79,7 @@ User message (any Pieverse runtime)
 | `clawhedge-set-cap` | Set daily USDT spending cap | [View](https://www.pieverse.io/skill-store?skill=56076) |
 | `clawhedge-close-hedge` | Close Level Finance short, receive USDT | [View](https://www.pieverse.io/skill-store?skill=56075) |
 | `clawhedge-status` | View cap, positions, agent BNB balance | [View](https://www.pieverse.io/skill-store?skill=56077) |
-| `clawhedge-myx-short` | Open Level Finance perp short via TEE | [pending upload] |
+| `clawhedge-level-short` | Open Level Finance perp short via TEE | [View](https://www.pieverse.io/skill-store?skill=56079) |
 
 ---
 
@@ -113,7 +113,7 @@ clawhedge/
 │   ├── clawhedge-set-cap/
 │   ├── clawhedge-close-hedge/
 │   ├── clawhedge-status/
-│   └── clawhedge-myx-short/
+│   └── clawhedge-level-short/
 ├── docs/
 │   ├── bounty-map.md
 │   ├── architecture.svg
