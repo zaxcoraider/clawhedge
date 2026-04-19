@@ -14,7 +14,7 @@ Opens a short perpetual on MYX Finance on BSC. Uses the TEE wallet — no key ma
 - `market` (string): MYX market, e.g. `"BTC-USDT"`, `"BNB-USDT"`
 - `usdtCollateral` (number): USDT to post as collateral (min 5)
 - `leverageX` (number, 1–10): leverage multiplier
-- `maxSlippageBps` (number, default 50): price slippage tolerance in basis points
+- `maxSlippageBps` (number, default 50): price slippage tolerance
 
 ### Safety
 
