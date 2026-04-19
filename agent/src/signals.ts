@@ -23,12 +23,7 @@ async function getBitqueryToken(): Promise<string> {
   const res = await fetch(OAUTH_URL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      grant_type:    "client_credentials",
-      client_id:     clientId,
-      client_secret: clientSecret,
-      scope:         "api",
-    }),
+    body: `grant_type=client_credentials&client_id=${encodeURIComponent(clientId)}&client_secret=${encodeURIComponent(clientSecret)}&scope=api`,
   });
 
   if (!res.ok) throw new Error(`Bitquery OAuth failed: ${res.status}`);
@@ -41,13 +36,14 @@ async function getBitqueryToken(): Promise<string> {
   return _cachedToken.token;
 }
 
-const QUERY = `
-query FourMemeSignals($since: ISO8601DateTime!) {
+function buildQuery(since: string): string {
+  return `
+{
   EVM(network: bsc) {
     DEXTradeByTokens(
       where: {
         Trade: { Dex: { ProtocolName: { is: "fourmeme_v1" } } }
-        Block: { Time: { after: $since } }
+        Block: { Time: { after: "${since}" } }
       }
       orderBy: { descendingByField: "volumeUSD" }
       limit: { count: 50 }
@@ -64,6 +60,7 @@ query FourMemeSignals($since: ISO8601DateTime!) {
   }
 }
 `;
+}
 
 function latestCacheFile(): { file: string; fresh: boolean } {
   fs.mkdirSync(CACHE_DIR, { recursive: true });
@@ -95,7 +92,7 @@ export async function fetchFourMemeSignals(): Promise<TokenSignal[]> {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${token}`,
     },
-    body: JSON.stringify({ query: QUERY, variables: { since } }),
+    body: JSON.stringify({ query: buildQuery(since) }),
   });
 
   if (!res.ok) throw new Error(`Bitquery request failed: ${res.status}`);
