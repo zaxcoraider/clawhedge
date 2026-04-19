@@ -2,6 +2,18 @@
 
 Autonomous BSC trading agent — buys meme tokens on Four.meme and hedges with a perp short.
 
+> **Submission deadline: 3 days** | Built with PurrfectClaw + Foundry
+
+---
+
+## How It Works
+
+1. Agent scans Four.meme for newly launched tokens
+2. Runs GoPlus Security check (honeypot, rug, mint, hidden owner)
+3. Buys the token with BNB via the bonding curve
+4. Simultaneously opens a BNB perp short on MYX Finance as a hedge
+5. User can close the hedge anytime to collect USDT payout ± PnL
+
 ---
 
 ## Status
@@ -11,25 +23,47 @@ Autonomous BSC trading agent — buys meme tokens on Four.meme and hedges with a
 | 1 | PurrfectClaw agent onboarded | ✅ Done |
 | 2 | Foundry project scaffolded (BSC mainnet + testnet) | ✅ Done |
 | 3 | Four.meme real ABIs fetched & interfaces written | ✅ Done |
-| 4 | Perp DEX interface (hedge leg) | ⏳ Blocked — MYX has no public BSC router address. Awaiting fallback decision. |
-| 5 | HedgedBuyer.sol contract | ⏳ Not started |
-| 6 | Deploy scripts | ⏳ Not started |
-| 7 | Tests | ⏳ Not started |
+| 4 | HedgedBuyer.sol contract written | ✅ Done |
+| 5 | Test suite (8 tests, BSC mainnet fork) | ✅ Done — all passing |
+| 6 | Deploy scripts | ✅ Done |
+| 7 | Deployed to BSC testnet (chain 97) | ✅ Done |
+| 8 | All 5 skills published to Pieverse Skill Store | ✅ Done |
+| 9 | Mainnet deploy | ⏳ Blocked — MYX router address not public |
 
 ---
 
-## Agent Wallet (BSC mainnet, chain 56)
+## Agent Wallet
 
 ```
 0x889bf5f700f532950Ba67Be0B16eaB3378b992E1
 ```
 
-Managed by PurrfectClaw. Agent name: `clawhedge-zax-1776517111`.  
-Credentials stored in `~/.purrfectclaw/.env` (never committed).
+Managed by PurrfectClaw. Agent name: `clawhedge-zax-1776517111`.
 
 ---
 
-## Contracts / Interfaces
+## Deployed Contracts
+
+| Network | Contract | Address |
+|---------|----------|---------|
+| BSC Testnet (97) | HedgedBuyer | [`0x0Ec3689BE28aB60cbDF400015440a2feB50205Ae`](https://testnet.bscscan.com/address/0x0Ec3689BE28aB60cbDF400015440a2feB50205Ae) |
+| BSC Mainnet (56) | HedgedBuyer | Pending MYX router address |
+
+---
+
+## Skills (Pieverse Skill Store)
+
+| Skill | Description | Link |
+|-------|-------------|------|
+| `clawhedge-safe-buy` | Buy Four.meme token with GoPlus safety check | [View](https://www.pieverse.io/skill-store?skill=56074) |
+| `clawhedge-set-cap` | Set daily USDT spending cap on the contract | [View](https://www.pieverse.io/skill-store?skill=56076) |
+| `clawhedge-close-hedge` | Close open BNB short hedge, receive USDT payout | [View](https://www.pieverse.io/skill-store?skill=56075) |
+| `clawhedge-status` | View cap, open positions, agent BNB balance | [View](https://www.pieverse.io/skill-store?skill=56077) |
+| `clawhedge-scan` | Scan Four.meme for safe tokens to buy | [View](https://www.pieverse.io/skill-store?skill=56078) |
+
+---
+
+## Contracts & Interfaces
 
 ### Four.meme (BSC mainnet)
 
@@ -39,71 +73,64 @@ Credentials stored in `~/.purrfectclaw/.env` (never committed).
 | TokenManager V1 | `0xEC4549caDcE5DA21Df6E6422d448034B5233bFbC` |
 | Helper3 (quotes) | `0xF251F83e40a78868FcfA3FA4599Dad6494E46034` |
 
-Interfaces written:
-- `contracts/src/interfaces/IFourMemeTokenManager.sol` — `buyTokenAMAP`, `sellToken`, `createToken`, `TokenPurchase` event
-- `contracts/src/interfaces/IFourMemeHelper3.sol` — `getTokenInfo`, `tryBuy`, `trySell`
+Interfaces: `contracts/src/interfaces/IFourMemeTokenManager.sol`, `IFourMemeHelper3.sol`
 
-Signatures are **real** — sourced from `@pieverseio/purr-cli` production code and verified:
-- `TokenPurchase` topic `0x7db52723...` confirmed from live BSC block 93277991
+Signatures sourced from `@pieverseio/purr-cli` production code — verified against live BSC blocks.
 
 ### Perp DEX (hedge leg)
 
-- MYX Finance confirmed live on BSC but **does not publish its router address**. Blocked.
-- Fallback options discussed: Level Finance, Gains Network, Tigris — awaiting your call.
-
-### Standard
-
-- `contracts/src/interfaces/IERC20.sol`
+MYX Finance is live on BSC but does not publish its router address. `IMYXRouter.sol` is a simplified adapter interface — drop in the real address when confirmed.
 
 ---
 
-## Foundry Setup
+## Architecture
 
-```toml
-# contracts/foundry.toml
-solc     = 0.8.24
-chains   = bsc (56), bsc_testnet (97)
-RPCs     = $BSC_RPC_URL, $BSC_TESTNET_RPC_URL
-verifier = BscScan ($BSCSCAN_API_KEY)
+```
+User
+ ├── setCap(100 USDT)          → HedgedBuyer.sol (daily cap authorization)
+ └── clawhedge-scan            → finds safe token
+
+Agent (TEE)
+ └── hedgedBuy(token, ...)
+      ├── buyTokenAMAP()       → Four.meme TokenManager V2
+      └── openShort()          → MYX Finance (perp hedge)
+
+User
+ └── userClose(positionId)     → HedgedBuyer.sol → MYX closePosition → USDT back
 ```
 
+---
+
+## Foundry
+
 ```bash
-cd contracts && forge build   # compiles clean, 0 errors
+cd contracts
+
+# Build
+forge build
+
+# Test (BSC mainnet fork)
+BSC_RPC_URL=https://bsc-dataseed.binance.org forge test -vvv
+
+# Deploy to testnet
+forge script script/Deploy.s.sol --rpc-url bsc_testnet --broadcast
 ```
 
 ---
 
 ## Environment
 
-Copy `.env.example` to `.env` and fill in:
+Copy `.env.example` to `.env`:
 
 ```
 BSC_RPC_URL=https://bsc-dataseed.binance.org
 BSC_TESTNET_RPC_URL=https://data-seed-prebsc-1-s1.binance.org:8545
 BSCSCAN_API_KEY=
-BITQUERY_TOKEN=
-DGRID_API_KEY=
 DEPLOYER_PRIVATE_KEY=
-TEE_AGENT_ADDRESS=
+TEE_AGENT_ADDRESS=0x889bf5f700f532950Ba67Be0B16eaB3378b992E1
+FOURMEME_ADDR=0x5c952063c7fc8610FFDB798152D69F0B9550762b
+MYX_ROUTER=
+USDT_ADDR=0x55d398326f99059fF775485246999027B3197955
 ```
 
 `.env` is gitignored — never commit it.
-
----
-
-## Tools Installed
-
-| Tool | Version | Location |
-|------|---------|----------|
-| Foundry (forge/cast/anvil) | 1.5.1-stable | `~/.foundry/bin/` |
-| purr CLI | 0.2.2 | `~/.purrfectclaw/bin/purr` |
-| PurrfectClaw skills | 14 bundles | `~/.purrfectclaw/skills/` |
-
----
-
-## Next Steps
-
-1. Confirm perp DEX fallback (replace MYX) → write `IMYXRouter.sol` (or equivalent)
-2. Write `HedgedBuyer.sol` — buys on Four.meme + opens hedge short in one tx
-3. Deploy to BSC testnet (97), verify on BscScan
-4. Integration tests with Foundry fork
