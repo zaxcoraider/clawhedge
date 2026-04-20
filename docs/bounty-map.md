@@ -42,9 +42,9 @@
 |---|---|---|
 | Uses DGrid AI Gateway | `baseURL: "https://api.dgrid.ai/v1"` | `agent/src/dgrid.ts:11` |
 | Multi-model usage | 3 distinct model calls per cycle | `agent/src/dgrid.ts` |
-| TRIAGE model | `qwen/qwen-flash` — $0.05/M input | `agent/src/dgrid.ts:8` |
-| DECIDE model | `anthropic/claude-sonnet-4.6` — tool-calling for trading decisions | `agent/src/dgrid.ts:9` |
-| EXPLAIN model | `qwen/qwen-flash` — one-sentence user summary | `agent/src/dgrid.ts:10` |
+| TRIAGE model | `anthropic/claude-sonnet-4.6` — sharp noise filter | `agent/src/dgrid.ts:8` |
+| DECIDE model | `anthropic/claude-opus-4-5` — strongest tool-calling for trading decisions | `agent/src/dgrid.ts:9` |
+| EXPLAIN model | `anthropic/claude-sonnet-4.6` — crisp one-sentence user summary | `agent/src/dgrid.ts:10` |
 | Measurable call logs | Each stage logs model name + latency to console | `agent/src/decisions.ts` |
 | [verify exact req. from page] | DGrid API key funded and tested | `.env` → `DGRID_API_KEY` |
 

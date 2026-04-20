@@ -27,7 +27,7 @@ Every hackathon entry in this category is a long-only buyer. Meme trading withou
 |---|---|---|
 | Main ($50K pool) | First hedged + atomic + multi-model agent in the field | See demo tx below |
 | Pieverse ($2K) | 7 skills live on Skill Store | [Links below](#skills-pieverse-skill-store) |
-| DGrid ($3K credits) | Multi-model routing: `qwen/qwen-flash` triage + `claude-sonnet-4.6` decision + `qwen/qwen-flash` explain — measurable call logs | `agent/src/dgrid.ts` |
+| DGrid ($3K credits) | Multi-model routing: `claude-sonnet-4.6` triage + `claude-opus-4-5` decision + `claude-sonnet-4.6` explain — measurable call logs | `agent/src/dgrid.ts` |
 | Level Finance | First ClawHedge skill using Level Finance perp shorts via TEE | `contracts/src/interfaces/ILevelOrderManager.sol` |
 
 ---

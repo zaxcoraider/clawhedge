@@ -332,9 +332,9 @@ export default function Home() {
             <Panel variant="dim" label="DGRID MODELS">
               <div className="p-4 space-y-2 font-mono text-xs">
                 {[
-                  { role: "TRIAGE",   model: "qwen/qwen-flash",          color: "#4a5568" },
-                  { role: "DECIDE",   model: "claude-sonnet-4.6",         color: "#f0a500" },
-                  { role: "EXPLAIN",  model: "qwen/qwen-flash",          color: "#4a5568" },
+                  { role: "TRIAGE",  model: "claude-sonnet-4.6",  color: "#f0a500" },
+                  { role: "DECIDE",  model: "claude-opus-4-5",    color: "#ffe066" },
+                  { role: "EXPLAIN", model: "claude-sonnet-4.6",  color: "#f0a500" },
                 ].map(m => (
                   <div key={m.role} className="flex items-center justify-between">
                     <span className="text-[#4a5568]">{m.role}</span>

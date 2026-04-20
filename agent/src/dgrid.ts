@@ -2,11 +2,11 @@ import OpenAI from "openai";
 import type { TokenSignal, Action, PortfolioCtx } from "./types.js";
 
 // ---------------------------------------------------------------------------
-// Model IDs (dgrid.ai)
+// Model IDs (dgrid.ai) — top-tier config
 // ---------------------------------------------------------------------------
-const TRIAGE  = "qwen/qwen-flash";              // $0.05/$0.40 — fast filter
-const DECIDE  = "anthropic/claude-sonnet-4.6";  // $3/$15     — reliable tool calling
-const EXPLAIN = "qwen/qwen-flash";              // $0.05/$0.40 — one-sentence summary
+const TRIAGE  = "anthropic/claude-sonnet-4.6";  // $3/$15  — sharp triage, no noise
+const DECIDE  = "anthropic/claude-opus-4-5";    // $15/$75 — strongest decision + tool calling
+const EXPLAIN = "anthropic/claude-sonnet-4.6";  // $3/$15  — crisp one-sentence summary
 // ---------------------------------------------------------------------------
 
 export const client = new OpenAI({
