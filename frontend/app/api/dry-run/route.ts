@@ -3,9 +3,9 @@ import { NextResponse } from "next/server";
 export const maxDuration = 60; // Vercel max for hobby plan
 
 const DGRID_BASE    = "https://api.dgrid.ai/v1";
-const TRIAGE_MODEL  = "anthropic/claude-sonnet-4.6";
-const DECIDE_MODEL  = "anthropic/claude-sonnet-4.6"; // sonnet for speed, opus was timing out
-const EXPLAIN_MODEL = "anthropic/claude-sonnet-4.6";
+const TRIAGE_MODEL  = "anthropic/claude-haiku-4-5";   // fast + cheap noise filter
+const DECIDE_MODEL  = "anthropic/claude-opus-4-5";    // strongest for trading decisions
+const EXPLAIN_MODEL = "anthropic/claude-sonnet-4.6";  // crisp one-sentence summary
 
 /** Extract and parse the first JSON object in a string.
  *  Handles: raw JSON, ```json fences, trailing text after the closing brace. */
@@ -41,7 +41,7 @@ async function dgridChat(
       "Authorization": `Bearer ${process.env.DGRID_API_KEY ?? ""}`,
     },
     body: JSON.stringify({ model, messages, temperature: 0, ...opts }),
-    signal: AbortSignal.timeout(25000),
+    signal: AbortSignal.timeout(45000),
   });
   if (!res.ok) throw new Error(`DGrid ${model}: ${res.status} ${await res.text()}`);
   const json = await res.json() as {
