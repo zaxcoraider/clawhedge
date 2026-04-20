@@ -23,12 +23,35 @@ async function getBitqueryToken(): Promise<string> {
   return _token.value;
 }
 
+// Known base/quote tokens to exclude — these are not meme tokens
+const EXCLUDE_ADDRS = new Set([
+  "0x",                                                        // native BNB
+  "0x0000000000000000000000000000000000000000",
+  "0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c",               // WBNB
+  "0x55d398326f99059ff775485246999027b3197955",               // USDT
+  "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",               // USDC
+  "0xe9e7cea3dedca5984780bafc599bd69add087d56",               // BUSD
+]);
+
 function buildQuery(since: string) {
   return `{
   EVM(network: bsc) {
     DEXTradeByTokens(
       where: {
-        Trade: { Dex: { ProtocolName: { is: "fourmeme_v1" } } }
+        Trade: {
+          Dex: { ProtocolName: { is: "fourmeme_v1" } }
+          Currency: {
+            SmartContract: {
+              notIn: [
+                "0x0000000000000000000000000000000000000000",
+                "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+                "0x55d398326f99059fF775485246999027B3197955",
+                "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
+                "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56"
+              ]
+            }
+          }
+        }
         Block: { Time: { after: "${since}" } }
       }
       orderBy: { descendingByField: "volumeUSD" }
@@ -42,7 +65,9 @@ function buildQuery(since: string) {
 }`;
 }
 
-const BLOCK_FLAGS = ["is_honeypot","cannot_sell_all","transfer_pausable","is_mintable","hidden_owner"] as const;
+// Security flags that disqualify a token — low_liquidity removed because
+// bonding-curve tokens have zero PancakeSwap liquidity by design
+const BLOCK_FLAGS = ["is_honeypot","cannot_sell_all","transfer_pausable","hidden_owner"] as const;
 
 async function goPlusCheck(address: string) {
   try {
@@ -53,8 +78,9 @@ async function goPlusCheck(address: string) {
       ?.result?.[address.toLowerCase()];
     if (!data) return { safe: false, flags: ["no_data"], liquidity: 0 };
     const flags: string[] = BLOCK_FLAGS.filter(f => data[f] === "1");
+    // is_mintable is a soft warning only — don't block for it
+    if (data["is_mintable"] === "1") flags.push("mintable_warn");
     const liquidity = parseFloat(data["liquidity"] ?? "0");
-    if (liquidity < 1000) flags.push("low_liquidity");
     return { safe: flags.length === 0, flags, liquidity };
   } catch {
     return { safe: false, flags: ["goplus_timeout"], liquidity: 0 };
@@ -97,7 +123,11 @@ export async function GET() {
           controller.close(); return;
         }
 
-        const rows = bqJson.data?.EVM?.DEXTradeByTokens ?? [];
+        const rows = (bqJson.data?.EVM?.DEXTradeByTokens ?? [])
+          .filter(r => {
+            const addr = r.Trade.Currency.SmartContract?.toLowerCase() ?? "";
+            return addr.length > 10 && !EXCLUDE_ADDRS.has(addr);
+          });
         const top  = rows.slice(0, 10);
 
         controller.enqueue(evt("status", { msg: `FOUND ${rows.length} TOKENS — RUNNING GOPLUS CHECKS...` }));
