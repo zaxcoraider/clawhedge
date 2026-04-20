@@ -7,14 +7,25 @@ const TRIAGE_MODEL  = "anthropic/claude-sonnet-4.6";
 const DECIDE_MODEL  = "anthropic/claude-sonnet-4.6"; // sonnet for speed, opus was timing out
 const EXPLAIN_MODEL = "anthropic/claude-sonnet-4.6";
 
-/** Strip ```json ... ``` fences and parse — handles both raw JSON and markdown-wrapped responses */
+/** Extract and parse the first JSON object in a string.
+ *  Handles: raw JSON, ```json fences, trailing text after the closing brace. */
 function parseJSON(raw: string): Record<string, unknown> {
-  const stripped = raw
-    .trim()
+  // 1. Strip leading/trailing code fences
+  let s = raw.trim()
     .replace(/^```(?:json)?\s*/i, "")
-    .replace(/\s*```$/, "")
+    .replace(/\s*```\s*$/i, "")
     .trim();
-  return JSON.parse(stripped || "{}");
+
+  // 2. Find the first { and the matching closing }
+  const start = s.indexOf("{");
+  if (start === -1) return {};
+  let depth = 0, end = -1;
+  for (let i = start; i < s.length; i++) {
+    if (s[i] === "{") depth++;
+    else if (s[i] === "}") { depth--; if (depth === 0) { end = i; break; } }
+  }
+  if (end === -1) return {};
+  return JSON.parse(s.slice(start, end + 1));
 }
 
 async function dgridChat(
