@@ -21,9 +21,9 @@
 
 | Requirement | Our evidence | File / link |
 |---|---|---|
-| Skills published to Skill Store | 6 skills live | [skill-store links below] |
+| Skills published to Skill Store | 7 skills live | [skill-store links below] |
 | Uses Purr-fect Claw TEE wallet | All on-chain calls routed through TEE agent wallet | `agent/src/index.ts` |
-| [verify exact skill count req.] | Skills: scan, safe-buy, set-cap, close-hedge, status, level-short | `skills/` directory |
+| [verify exact skill count req.] | Skills: scan, safe-buy, set-cap, close-hedge, status, level-short, clawhedge | `skills/` directory |
 
 **Skill Store links:**
 - clawhedge-scan: https://www.pieverse.io/skill-store?skill=56078
@@ -32,6 +32,7 @@
 - clawhedge-close-hedge: https://www.pieverse.io/skill-store?skill=56075
 - clawhedge-status: https://www.pieverse.io/skill-store?skill=56077
 - clawhedge-level-short: https://www.pieverse.io/skill-store?skill=56079
+- clawhedge (flagship): https://www.pieverse.io/skill-store?skill=57064
 
 ---
 

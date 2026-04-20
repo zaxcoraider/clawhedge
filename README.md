@@ -26,7 +26,7 @@ Every hackathon entry in this category is a long-only buyer. Meme trading withou
 | Bounty | How ClawHedge hits it | Evidence |
 |---|---|---|
 | Main ($50K pool) | First hedged + atomic + multi-model agent in the field | See demo tx below |
-| Pieverse ($2K) | 6 skills live on Skill Store | [Links below](#skills-pieverse-skill-store) |
+| Pieverse ($2K) | 7 skills live on Skill Store | [Links below](#skills-pieverse-skill-store) |
 | DGrid ($3K credits) | Multi-model routing: `qwen/qwen-flash` triage + `claude-sonnet-4.6` decision + `qwen/qwen-flash` explain — measurable call logs | `agent/src/dgrid.ts` |
 | Level Finance | First ClawHedge skill using Level Finance perp shorts via TEE | `contracts/src/interfaces/ILevelOrderManager.sol` |
 
@@ -80,6 +80,7 @@ User message (any Pieverse runtime)
 | `clawhedge-close-hedge` | Close Level Finance short, receive USDT | [View](https://www.pieverse.io/skill-store?skill=56075) |
 | `clawhedge-status` | View cap, positions, agent BNB balance | [View](https://www.pieverse.io/skill-store?skill=56077) |
 | `clawhedge-level-short` | Open Level Finance perp short via TEE | [View](https://www.pieverse.io/skill-store?skill=56079) |
+| `clawhedge` | Atomic hedged buy — Four.meme + Level Finance in one tx | [View](https://www.pieverse.io/skill-store?skill=57064) |
 
 ---
 
