@@ -42,7 +42,7 @@
 | Uses DGrid AI Gateway | `baseURL: "https://api.dgrid.ai/v1"` | `agent/src/dgrid.ts:11` |
 | Multi-model usage | 3 distinct model calls per cycle | `agent/src/dgrid.ts` |
 | TRIAGE model | `anthropic/claude-sonnet-4.6` — fast noise filter | `agent/src/dgrid.ts:8` |
-| DECIDE model | `anthropic/claude-opus-4-5` — strongest tool-calling for trading decisions | `agent/src/dgrid.ts:9` |
+| DECIDE model | `anthropic/claude-sonnet-4.6` — DGrid only has sonnet-4.6 live; code is wired for opus when available | `frontend/app/api/dry-run/route.ts:8` |
 | EXPLAIN model | `anthropic/claude-sonnet-4.6` — one-sentence user summary | `agent/src/dgrid.ts:10` |
 | Measurable call logs | Each stage logs model name + latency to console | `agent/src/decisions.ts` |
 | Live frontend demo | Streaming DGrid pipeline visible at clawhedge.vercel.app | `frontend/app/api/dry-run/route.ts` |

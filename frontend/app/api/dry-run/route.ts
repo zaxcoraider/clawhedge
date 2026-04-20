@@ -3,9 +3,9 @@ import { NextResponse } from "next/server";
 export const maxDuration = 60; // Vercel max for hobby plan
 
 const DGRID_BASE    = "https://api.dgrid.ai/v1";
-const TRIAGE_MODEL  = "anthropic/claude-haiku-4-5";   // fast + cheap noise filter
-const DECIDE_MODEL  = "anthropic/claude-opus-4-5";    // strongest for trading decisions
-const EXPLAIN_MODEL = "anthropic/claude-sonnet-4.6";  // crisp one-sentence summary
+const TRIAGE_MODEL  = "anthropic/claude-sonnet-4.6";  // triage — noise filter
+const DECIDE_MODEL  = "anthropic/claude-sonnet-4.6";  // decision — only Anthropic model DGrid has live
+const EXPLAIN_MODEL = "anthropic/claude-sonnet-4.6";  // explain — one-sentence summary
 
 /** Extract and parse the first JSON object in a string.
  *  Handles: raw JSON, ```json fences, trailing text after the closing brace. */
