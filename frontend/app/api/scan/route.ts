@@ -69,18 +69,28 @@ function buildQuery(since: string) {
 // bonding-curve tokens have zero PancakeSwap liquidity by design
 const BLOCK_FLAGS = ["is_honeypot","cannot_sell_all","transfer_pausable","hidden_owner"] as const;
 
+interface GoPlusData {
+  [key: string]: string | { liquidity?: string }[] | undefined;
+  dex?: { liquidity?: string }[];
+}
+
 async function goPlusCheck(address: string) {
   try {
     const res  = await fetch(`${GOPLUS_URL}?contract_addresses=${address}`,
       { signal: AbortSignal.timeout(6000) });
-    const json = (await res.json()) as Record<string, unknown>;
-    const data = (json as Record<string, Record<string, Record<string,string>>>)
-      ?.result?.[address.toLowerCase()];
+    const json = (await res.json()) as { result?: Record<string, GoPlusData> };
+    const data = json?.result?.[address.toLowerCase()];
     if (!data) return { safe: false, flags: ["no_data"], liquidity: 0 };
-    const flags: string[] = BLOCK_FLAGS.filter(f => data[f] === "1");
-    // is_mintable is a soft warning only — don't block for it
-    if (data["is_mintable"] === "1") flags.push("mintable_warn");
-    const liquidity = parseFloat(data["liquidity"] ?? "0");
+
+    const flags: string[] = BLOCK_FLAGS.filter(f => (data[f] as string) === "1");
+    if ((data["is_mintable"] as string) === "1") flags.push("mintable_warn");
+
+    // Liquidity lives in data.dex[].liquidity — sum all pairs
+    const dexPairs = (data.dex ?? []) as { liquidity?: string }[];
+    const liquidity = dexPairs.reduce(
+      (sum, pair) => sum + parseFloat(pair.liquidity ?? "0"), 0
+    );
+
     return { safe: flags.length === 0, flags, liquidity };
   } catch {
     return { safe: false, flags: ["goplus_timeout"], liquidity: 0 };

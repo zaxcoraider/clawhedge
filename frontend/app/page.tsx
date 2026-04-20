@@ -22,7 +22,7 @@ interface DryRunResult{ type: string; reasoning: string; stages: Stage[]; simula
 
 function short(addr: string) { return `${addr.slice(0,6)}…${addr.slice(-4)}`; }
 function usd(n: number)      { return n < 1 ? "<$1" : `$${n.toFixed(0)}`; }
-function liq(n: number)      { return n < 100 ? "BONDING" : `$${n.toFixed(0)}`; }
+function liq(n: number)      { return n < 500 ? "BONDING" : `$${n >= 1_000_000 ? (n/1_000_000).toFixed(1)+"M" : n >= 1000 ? (n/1000).toFixed(0)+"K" : n.toFixed(0)}`; }
 
 /* ── Panel wrapper ── */
 function Panel({ variant="dim", label, children, className="" }:
