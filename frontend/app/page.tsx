@@ -63,22 +63,65 @@ function StatCard({ label, value, variant="dim" }:
 }
 
 export default function Home() {
-  const [scan, setScan]             = useState<ScanResult | null>(null);
+  const [scan, setScan]               = useState<ScanResult | null>(null);
   const [scanLoading, setScanLoading] = useState(false);
-  const [dryRun, setDryRun]         = useState<DryRunResult | null>(null);
-  const [dryRunning, setDryRunning] = useState(false);
-  const [lastError, setLastError]   = useState<string | null>(null);
-  const [tick, setTick]             = useState(0);
+  const [scanStatus, setScanStatus]   = useState<string>("");
+  const [liveTokens, setLiveTokens]   = useState<Token[]>([]);
+  const [dryRun, setDryRun]           = useState<DryRunResult | null>(null);
+  const [dryRunning, setDryRunning]   = useState(false);
+  const [lastError, setLastError]     = useState<string | null>(null);
+  const [tick, setTick]               = useState(0);
 
   const runScan = useCallback(async () => {
-    setScanLoading(true); setLastError(null);
+    setScanLoading(true);
+    setLastError(null);
+    setLiveTokens([]);
+    setScanStatus("INITIALISING...");
+
     try {
-      const res  = await fetch("/api/scan");
-      const data = await res.json() as ScanResult & { error?: string };
-      if (data.error) throw new Error(data.error);
-      setScan(data);
-    } catch (e) { setLastError(String(e)); }
-    finally { setScanLoading(false); }
+      const res = await fetch("/api/scan");
+      if (!res.body) throw new Error("No stream body");
+
+      const reader  = res.body.getReader();
+      const decoder = new TextDecoder();
+      let   buf     = "";
+      let   scannedAt = new Date().toISOString();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buf += decoder.decode(value, { stream: true });
+
+        const lines = buf.split("\n\n");
+        buf = lines.pop() ?? "";
+
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          try {
+            const ev = JSON.parse(line.slice(6)) as {
+              type: string; msg?: string; token?: Token; scannedAt?: string;
+            };
+            if (ev.type === "status" && ev.msg) setScanStatus(ev.msg);
+            if (ev.type === "token"  && ev.token) setLiveTokens(t => [...t, ev.token!]);
+            if (ev.type === "error"  && ev.msg)  { setLastError(ev.msg); setScanStatus(""); }
+            if (ev.type === "done") {
+              scannedAt = ev.scannedAt ?? scannedAt;
+              setScanStatus("SCAN COMPLETE");
+            }
+          } catch { /* skip malformed */ }
+        }
+      }
+
+      setLiveTokens(prev => {
+        setScan({ tokens: prev, scannedAt });
+        return prev;
+      });
+    } catch (e) {
+      setLastError(String(e));
+    } finally {
+      setScanLoading(false);
+      setScanStatus("");
+    }
   }, []);
 
   const runDryRun = useCallback(async () => {
@@ -96,8 +139,10 @@ export default function Home() {
     return () => clearInterval(id);
   }, []);
 
-  const safeTokens = scan?.tokens.filter(t =>  t.safe) ?? [];
-  const risky      = scan?.tokens.filter(t => !t.safe) ?? [];
+  // use liveTokens while streaming, fall back to completed scan
+  const displayTokens = scanLoading ? liveTokens : (scan?.tokens ?? []);
+  const safeTokens    = displayTokens.filter(t =>  t.safe);
+  const risky         = displayTokens.filter(t => !t.safe);
 
   return (
     <div className="min-h-screen bg-[#050709] grid-bg relative overflow-x-hidden">
@@ -162,7 +207,7 @@ export default function Home() {
                 <button onClick={runScan} disabled={scanLoading} className="btn-gold px-6 py-3 rounded-lg font-mono text-sm">
                   {scanLoading ? (
                     <span className="cursor">SCANNING</span>
-                  ) : "↻  SCAN FOUR.MEME"}
+                  ) : "↻  SCAN FOUR.MEME NOW"}
                 </button>
                 <button onClick={runDryRun} disabled={dryRunning} className="btn-outline px-6 py-3 rounded-lg font-mono text-sm">
                   {dryRunning ? (
@@ -199,20 +244,21 @@ export default function Home() {
           {/* Scan table — takes 2/3 */}
           <div className="md:col-span-2">
             <Panel variant="green" label="LIVE SCAN — FOUR.MEME TOKENS">
-              {scanLoading && !scan && (
-                <div className="p-16 text-center font-mono text-sm text-[#00d68f]">
-                  <div className="text-4xl mb-4 animate-pulse-gold">⚡</div>
-                  <span className="cursor">FETCHING TOKENS + GOPLUS CHECK</span>
+              {/* live status bar */}
+              {scanLoading && scanStatus && (
+                <div className="px-4 py-2 border-b border-[#00d68f]/20 bg-[#00d68f]/5 flex items-center gap-3">
+                  <div className="dot-live" style={{width:6,height:6,flexShrink:0}} />
+                  <span className="font-mono text-[11px] text-[#00d68f] cursor">{scanStatus}</span>
                 </div>
               )}
 
-              {!scanLoading && !scan && (
+              {!scanLoading && !scan && liveTokens.length === 0 && (
                 <div className="p-12 text-center font-mono text-xs text-[#4a5568]">
                   PRESS SCAN TO LOAD TOKENS
                 </div>
               )}
 
-              {scan && (
+              {(displayTokens.length > 0 || (scan && !scanLoading)) && (
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs font-mono">
                     <thead>
@@ -223,20 +269,18 @@ export default function Home() {
                       </tr>
                     </thead>
                     <tbody>
-                      {scan.tokens.length === 0 && (
+                      {displayTokens.length === 0 && (
                         <tr><td colSpan={8} className="px-4 py-8 text-center text-[#4a5568]">
                           NO TOKENS FOUND IN LAST 30 MIN
                         </td></tr>
                       )}
-                      {scan.tokens.map((t, i) => (
+                      {displayTokens.map((t, i) => (
                         <tr key={t.address}
                           className={`border-b border-[#0f1520] transition-all
                             ${t.safe ? "terminal-row-safe" : "terminal-row"} fade-in`}
-                          style={{ animationDelay: `${i * 40}ms` }}>
+                          style={{ animationDelay: `${i * 30}ms` }}>
                           <td className="px-4 py-3 text-[#4a5568]">{String(i+1).padStart(2,"0")}</td>
-                          <td className="px-4 py-3 font-black text-[#c8d6e5]">
-                            {t.symbol || "???"}
-                          </td>
+                          <td className="px-4 py-3 font-black text-[#c8d6e5]">{t.symbol || "???"}</td>
                           <td className="px-4 py-3">
                             <a href={t.bscscanUrl} target="_blank" rel="noreferrer"
                               className="text-[#4a5568] hover:text-[#f0a500] transition-colors">
@@ -266,10 +310,21 @@ export default function Home() {
                           </td>
                         </tr>
                       ))}
+
+                      {/* skeleton rows while streaming */}
+                      {scanLoading && Array.from({ length: Math.max(0, 5 - displayTokens.length) }).map((_, i) => (
+                        <tr key={`skel-${i}`} className="border-b border-[#0f1520] opacity-30">
+                          {Array.from({length:8}).map((_, j) => (
+                            <td key={j} className="px-4 py-3">
+                              <div className="h-3 bg-[#1e2736] rounded animate-pulse" style={{width: j===1?"60px":j===2?"90px":"40px"}} />
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                   <div className="px-4 py-2 border-t border-[#1e2736] flex items-center justify-between text-[10px] font-mono text-[#4a5568]">
-                    <span>SCANNED AT {new Date(scan.scannedAt).toLocaleTimeString()}</span>
+                    <span>{scanLoading ? `CHECKING... ${displayTokens.length} LOADED` : `SCANNED AT ${new Date(scan?.scannedAt ?? Date.now()).toLocaleTimeString()}`}</span>
                     <span>{safeTokens.length} SAFE / {risky.length} FLAGGED</span>
                   </div>
                 </div>
