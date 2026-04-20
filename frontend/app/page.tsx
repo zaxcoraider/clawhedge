@@ -22,6 +22,7 @@ interface DryRunResult{ type: string; reasoning: string; stages: Stage[]; simula
 
 function short(addr: string) { return `${addr.slice(0,6)}…${addr.slice(-4)}`; }
 function usd(n: number)      { return n < 1 ? "<$1" : `$${n.toFixed(0)}`; }
+function liq(n: number)      { return n < 100 ? "BONDING" : `$${n.toFixed(0)}`; }
 
 /* ── Panel wrapper ── */
 function Panel({ variant="dim", label, children, className="" }:
@@ -330,7 +331,9 @@ export default function Home() {
                           </td>
                           <td className="px-4 py-3 text-right text-[#c8d6e5]">{usd(t.volumeUSD)}</td>
                           <td className="px-4 py-3 text-right text-[#6b7f96]">{t.trades}</td>
-                          <td className="px-4 py-3 text-right text-[#6b7f96]">{usd(t.liquidity)}</td>
+                          <td className={`px-4 py-3 text-right text-xs ${t.liquidity < 100 ? "text-[#f0a500] opacity-70" : "text-[#00d68f]"}`}>
+                            {liq(t.liquidity)}
+                          </td>
                           <td className="px-4 py-3 text-center">
                             {t.safe ? (
                               <span className="text-[#00d68f] font-black text-glow-green">✓ SAFE</span>
