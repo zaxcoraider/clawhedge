@@ -450,7 +450,7 @@ export default function Home() {
               <div className="p-4 space-y-2 font-mono text-xs">
                 {[
                   { role: "TRIAGE",  model: "claude-sonnet-4.6",  color: "#f0a500" },
-                  { role: "DECIDE",  model: "claude-opus-4-5",    color: "#ffe066" },
+                  { role: "DECIDE",  model: "claude-sonnet-4.6",  color: "#ffe066" },
                   { role: "EXPLAIN", model: "claude-sonnet-4.6",  color: "#f0a500" },
                 ].map(m => (
                   <div key={m.role} className="flex items-center justify-between">
