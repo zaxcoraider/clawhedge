@@ -4,9 +4,9 @@ import type { TokenSignal, Action, PortfolioCtx } from "./types.js";
 // ---------------------------------------------------------------------------
 // Model IDs (dgrid.ai) — top-tier config
 // ---------------------------------------------------------------------------
-const TRIAGE  = "anthropic/claude-sonnet-4.6";  // $3/$15  — sharp triage, no noise
-const DECIDE  = "anthropic/claude-opus-4-5";    // $15/$75 — strongest decision + tool calling
-const EXPLAIN = "anthropic/claude-sonnet-4.6";  // $3/$15  — crisp one-sentence summary
+const TRIAGE  = "anthropic/claude-sonnet-4.6";  // triage — noise filter
+const DECIDE  = "anthropic/claude-sonnet-4.6";  // decision — swap for opus when DGrid adds it
+const EXPLAIN = "anthropic/claude-sonnet-4.6";  // explain — one-sentence summary
 // ---------------------------------------------------------------------------
 
 export const client = new OpenAI({

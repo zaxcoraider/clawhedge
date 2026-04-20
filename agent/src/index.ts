@@ -139,11 +139,11 @@ switch (command) {
     break;
 
   case "run":
-    console.log("run: not yet implemented");
+    console.log("run: autonomous loop — roadmap (auto-scan → AI decide → buy)");
     break;
 
   case "status":
-    console.log("status: not yet implemented");
+    console.log("status: portfolio view — roadmap (TEE wallet balances + open positions)");
     break;
 
   default:

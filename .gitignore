@@ -10,3 +10,9 @@ contracts/out/
 contracts/cache/
 contracts/broadcast/
 .DS_Store
+.cache/
+.claude/
+agent/src/tx2-setcap.mjs
+agent/src/tx3-hedgedbuy.mjs
+agent/src/deploy-demo.mjs
+agent/src/build-hedgedbuy-steps.mjs
