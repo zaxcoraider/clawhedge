@@ -18,7 +18,7 @@ interface Token {
 }
 interface ScanResult  { tokens: Token[]; scannedAt: string; }
 interface Stage       { name: string; tokens?: number; action?: string; latencyMs: number; }
-interface DryRunResult{ type: string; reasoning: string; stages: Stage[]; }
+interface DryRunResult{ type: string; reasoning: string; stages: Stage[]; simulated?: boolean; summary?: string; error?: string; }
 
 function short(addr: string) { return `${addr.slice(0,6)}…${addr.slice(-4)}`; }
 function usd(n: number)      { return n < 1 ? "<$1" : `$${n.toFixed(0)}`; }
@@ -221,11 +221,11 @@ export default function Home() {
 
         {/* ── STATS ROW ── */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard label="TOKENS SCANNED"  value={scan?.tokens.length ?? "—"} variant="dim" />
-          <StatCard label="SAFE CANDIDATES" value={safeTokens.length || (scan ? "0" : "—")} variant="green" />
-          <StatCard label="FLAGGED RISKY"   value={risky.length || (scan ? "0" : "—")} variant="dim" />
+          <StatCard label="TOKENS SCANNED"  value={displayTokens.length || (scanLoading ? "…" : "—")} variant="dim" />
+          <StatCard label="SAFE CANDIDATES" value={safeTokens.length || (displayTokens.length > 0 || scan ? "0" : "—")} variant="green" />
+          <StatCard label="FLAGGED RISKY"   value={risky.length       || (displayTokens.length > 0 || scan ? "0" : "—")} variant="dim" />
           <StatCard label="LAST SCAN"
-            value={scan ? new Date(scan.scannedAt).toLocaleTimeString() : "—"}
+            value={scan ? new Date(scan.scannedAt).toLocaleTimeString() : scanLoading ? "LIVE…" : "—"}
             variant="gold" />
         </div>
 
@@ -334,7 +334,7 @@ export default function Home() {
 
           {/* Agent panel — takes 1/3 */}
           <div className="space-y-4">
-            <Panel variant="gold" label="AGENT DECISION">
+            <Panel variant="gold" label="AGENT DECISION — DRY RUN">
               {!dryRun && !dryRunning && (
                 <div className="p-8 text-center font-mono text-xs text-[#4a5568]">
                   PRESS DRY-RUN TO SIMULATE<br />DGRID 3-MODEL PIPELINE
@@ -348,6 +348,21 @@ export default function Home() {
               )}
               {dryRun && (
                 <div className="p-5 space-y-4 fade-in">
+
+                  {/* simulated badge */}
+                  {dryRun.simulated && (
+                    <div className="text-[10px] font-mono text-[#4a5568] border border-[#1e2736] rounded px-2 py-1 text-center tracking-widest">
+                      ⚠ SIMULATED — ADD DGRID_API_KEY TO VERCEL ENV TO GO LIVE
+                    </div>
+                  )}
+
+                  {/* error */}
+                  {dryRun.error && (
+                    <div className="text-[11px] font-mono text-red-400 border border-red-900 rounded p-2">
+                      ✗ {dryRun.error}
+                    </div>
+                  )}
+
                   {/* Decision badge */}
                   <div className={`text-center py-3 rounded border font-black tracking-widest text-sm
                     ${dryRun.type === "BUY_AND_HEDGE"
@@ -364,11 +379,14 @@ export default function Home() {
                   {/* Stage log */}
                   <div className="space-y-2">
                     <div className="panel-label text-[#4a5568]">PIPELINE STAGES</div>
-                    {dryRun.stages.map((s, i) => (
+                    {dryRun.stages.map((s) => (
                       <div key={s.name}
                         className="bg-[#0a0d14] border border-[#1e2736] rounded p-3 flex items-start justify-between gap-2">
                         <div>
                           <div className="text-[10px] text-[#f0a500] font-black tracking-widest">{s.name}</div>
+                          {"model" in s && (
+                            <div className="text-[9px] text-[#4a5568] mt-0.5">{(s as Stage & {model?:string}).model}</div>
+                          )}
                           <div className="text-xs text-[#c8d6e5] mt-0.5 font-mono">
                             {s.tokens !== undefined ? `${s.tokens} tokens` : s.action}
                           </div>
