@@ -33,9 +33,10 @@ Every hackathon entry in this category is a long-only buyer. Meme trading withou
 ## Live artifacts
 
 - **Mainnet HedgedBuyer**: [`0x2084a2A9C23d9ba70f66bBEF7A91C6d202Bf478e`](https://bscscan.com/address/0x2084a2A9C23d9ba70f66bBEF7A91C6d202Bf478e)
-- **Deploy tx**: [`0x167963fb12cba5bd15a97a1c4ada8db6b749ed9a95809630243f1dde6c6a2b07`](https://bscscan.com/tx/0x167963fb12cba5bd15a97a1c4ada8db6b749ed9a95809630243f1dde6c6a2b07)
-- **USDT approve tx**: [`0xb5425d600f57eff547346ed9cdd70fcefed028514ee432ac667ec6f8d97f69f5`](https://bscscan.com/tx/0xb5425d600f57eff547346ed9cdd70fcefed028514ee432ac667ec6f8d97f69f5)
-- **setCap tx**: [`0x53b5c5439a7e5b11350e10a8ee323db5053693a3b24fb266f8f7703c96279d09`](https://bscscan.com/tx/0x53b5c5439a7e5b11350e10a8ee323db5053693a3b24fb266f8f7703c96279d09)
+- **Deploy tx**: [`0x167963...`](https://bscscan.com/tx/0x167963fb12cba5bd15a97a1c4ada8db6b749ed9a95809630243f1dde6c6a2b07)
+- **USDT approve tx**: [`0xb5425d...`](https://bscscan.com/tx/0xb5425d600f57eff547346ed9cdd70fcefed028514ee432ac667ec6f8d97f69f5)
+- **setCap tx**: [`0x53b5c5...`](https://bscscan.com/tx/0x53b5c5439a7e5b11350e10a8ee323db5053693a3b24fb266f8f7703c96279d09)
+- **TEE wallet Four.meme buy (KICAU)**: [`0x006d2d...`](https://bscscan.com/tx/0x006d2de6cfaad7a08f42237ef1a3ce5642fa538447174f5aca4459ca2cb3999c)
 - **Live dashboard**: [clawhedge.vercel.app](https://clawhedge.vercel.app)
 - **Demo video**: `[YouTube link — add after recording]`
 

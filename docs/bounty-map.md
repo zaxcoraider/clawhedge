@@ -64,9 +64,10 @@
 
 | Tx | Hash | What it proves |
 |---|---|---|
-| Deploy | [`0x167963...`](https://bscscan.com/tx/0x167963fb12cba5bd15a97a1c4ada8db6b749ed9a95809630243f1dde6c6a2b07) | Contract live on mainnet |
+| Deploy | [`0x167963...`](https://bscscan.com/tx/0x167963fb12cba5bd15a97a1c4ada8db6b749ed9a95809630243f1dde6c6a2b07) | HedgedBuyer contract live on mainnet |
 | USDT approve | [`0xb5425d...`](https://bscscan.com/tx/0xb5425d600f57eff547346ed9cdd70fcefed028514ee432ac667ec6f8d97f69f5) | User pre-authorized contract to pull USDT |
-| setCap | [`0x53b5c5...`](https://bscscan.com/tx/0x53b5c5439a7e5b11350e10a8ee323db5053693a3b24fb266f8f7703c96279d09) | Daily spending cap set on-chain |
+| setCap | [`0x53b5c5...`](https://bscscan.com/tx/0x53b5c5439a7e5b11350e10a8ee323db5053693a3b24fb266f8f7703c96279d09) | Daily spending cap enforced on-chain |
+| TEE buy KICAU | [`0x006d2d...`](https://bscscan.com/tx/0x006d2de6cfaad7a08f42237ef1a3ce5642fa538447174f5aca4459ca2cb3999c) | TEE wallet buying Four.meme V2 token via `purr fourmeme buy` |
 
 ---
 
@@ -74,6 +75,6 @@
 
 | Gap | Reason | Impact |
 |---|---|---|
-| Live mainnet `hedgedBuy` tx | Requires Pieverse TEE wallet execution; TEE key is managed by the enclave | Demo shows contract + pre-conditions; `hedgedBuy` logic is fully implemented and tested |
+| Atomic `hedgedBuy` on mainnet | Level Finance `placeOrder` sends BNB execution fee refund back to HedgedBuyer which has no `receive()` — one-line fix, requires redeploy | Four.meme buy confirmed via TEE (0x006d2d); hedge logic fully implemented and fork-tested |
 | Level Finance TVL gate | Unknown — verify on bounty page | May affect Level Finance bounty eligibility |
 | opBNB support | Not implemented | Out of scope for this sprint |
