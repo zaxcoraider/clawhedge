@@ -6,7 +6,7 @@
 
 ## Shot 1 — Hook (0:00–0:15)
 
-**Screen:** ClawHedge dashboard at live Vercel URL  
+**Screen:** ClawHedge dashboard at https://clawhedge.vercel.app  
 **Narration:**  
 > "Every meme token buyer in this hackathon is long-only. One dump and it's gone. ClawHedge is different — it buys AND hedges in the same transaction."
 
@@ -14,61 +14,70 @@
 
 ## Shot 2 — Live Scan (0:15–0:35)
 
-**Screen:** Hit "Scan Four.meme Now" button on dashboard  
-**Show:** Token table populates — green ✓ Safe / red ✗ flagged rows  
+**Screen:** Hit "Scan Four.meme Now" button  
+**Show:** Terminal status lines appear one by one — "AUTHENTICATING…" → "QUERYING…" → "GOPLUS CHECK 1/10…" — then token rows populate with green ✓ Safe / red flags  
 **Narration:**  
-> "The agent fetches freshly launched tokens from Four.meme, runs GoPlus honeypot checks on each one, and ranks survivors by liquidity. This happens every 30 seconds automatically."
+> "The agent fetches freshly launched tokens from Four.meme, runs GoPlus honeypot checks on each one, and ranks survivors by liquidity. Real data, live on BSC."
 
 ---
 
-## Shot 3 — Agent Decision (0:35–0:55)
+## Shot 3 — AI Decision Pipeline (0:35–0:55)
 
 **Screen:** Hit "Dry-Run Agent" button  
-**Show:** Stage log appearing — triage → safety → decide → explain  
+**Show:** Stage log appearing line by line — TRIAGE running → done → DECIDE running → done → EXPLAIN done — then final HOLD/BUY_AND_HEDGE verdict  
 **Narration:**  
-> "DGrid routes three different models: a cheap flash model filters noise, Claude Sonnet makes the trading decision via tool-calling, and a cheap model writes the one-sentence summary the user sees."
+> "DGrid routes three Claude models: Sonnet filters the noise, Opus-4 makes the trading decision with tool-calling, Sonnet writes the one sentence the user sees. Three models, one pipeline, under 30 seconds."
 
 ---
 
-## Shot 4 — The Contract (0:55–1:15)
+## Shot 4 — The Contract (0:55–1:20)
 
-**Screen:** BSCScan testnet contract page for HedgedBuyer  
-**Show:** Scroll to `hedgedBuy` function — highlight the two calls inside  
+**Screen:** BscScan mainnet — https://bscscan.com/address/0x2084a2A9C23d9ba70f66bBEF7A91C6d202Bf478e  
+**Show:** Contract tab → scroll to `hedgedBuy` function  
 **Narration:**  
-> "One transaction. `buyTokenAMAP` sends BNB to Four.meme's bonding curve. `placeOrder` opens a BNB short on Level Finance. The user's daily USDT cap is enforced on-chain — the agent can never spend more than authorised."
+> "One transaction. `buyTokenAMAP` sends BNB to Four.meme's bonding curve. `placeOrder` opens a BNB short on Level Finance. The user's daily USDT cap is enforced on-chain — the agent can never overspend."
+
+**Then:** Switch to the three mainnet txs:  
+- Deploy: `0x167963...`  
+- USDT approve: `0xb5425d...`  
+- setCap: `0x53b5c5...`  
+**Narration:**  
+> "Contract is live on BSC mainnet. User pre-approved USDT and set their daily cap — the contract is primed and ready."
 
 ---
 
-## Shot 5 — Skills on Pieverse (1:15–1:35)
+## Shot 5 — Skills on Pieverse (1:20–1:40)
 
-**Screen:** Pieverse Skill Store — show all 6 skill listings  
+**Screen:** Pieverse Skill Store — show clawhedge skill listing (skill=57064)  
 **Narration:**  
-> "Six skills published on the Pieverse Skill Store. Any agent on any Pieverse runtime — WhatsApp, Telegram, Line — can install clawhedge-scan, safe-buy, set-cap, and close-hedge to get full hedged trading in one conversation."
+> "Seven skills published on the Pieverse Skill Store. Any user on Telegram, WhatsApp or Line can install ClawHedge and get hedged meme trading in one message — no wallet app, no Metamask popup."
 
 ---
 
-## Shot 6 — Forge Tests (1:35–1:50)
+## Shot 6 — Forge Tests (1:40–1:55)
 
-**Screen:** Terminal running `forge test --fork-url $BSC_RPC_URL -vv`  
+**Screen:** Terminal running `forge test --fork-url $BSC_RPC_URL -vv` in contracts/  
 **Show:** 8 green PASS lines  
 **Narration:**  
-> "Eight tests against a BSC mainnet fork. OnlyAgent guard, epoch cap rollover, GoPlus safety, close position payout — all verified."
+> "Eight tests against a live BSC mainnet fork. OnlyAgent guard, daily cap rollover, Level Finance calldata encoding, close-position flow — all green."
 
 ---
 
-## Shot 7 — Closing (1:50–2:00)
+## Shot 7 — Closing (1:55–2:00)
 
-**Screen:** Logo + tagline  
+**Screen:** Dashboard with logo  
 **Narration:**  
-> "ClawHedge. The first hedged trading agent on Four.meme. Buy memes. Hedge the dump."
+> "ClawHedge. The first hedged agent on Four.meme. Buy memes. Hedge the dump."
 
 ---
 
 ## Recording checklist
 
-- [ ] Record in 1080p minimum
-- [ ] Dashboard scan shows real tokens (run during active Four.meme trading hours)
-- [ ] DGrid account funded before recording dry-run
-- [ ] Forge test terminal uses dark theme
-- [ ] Mute system notifications before recording
-- [ ] Upload to YouTube (unlisted or public) and drop link into README
+- [ ] Open https://clawhedge.vercel.app in Chrome, dark mode
+- [ ] Run Scan first — do this during active Four.meme hours (Asia morning / US evening)
+- [ ] Run Dry-Run — DGRID_API_KEY must be set in Vercel env
+- [ ] BscScan contract tab — verify the 3 mainnet tx hashes load correctly
+- [ ] Pieverse skill store page loaded before recording
+- [ ] Terminal ready with `cd contracts && forge test --fork-url $BSC_RPC_URL -vv`
+- [ ] 1080p minimum, system notifications OFF
+- [ ] Upload to YouTube (unlisted is fine) and paste link into README

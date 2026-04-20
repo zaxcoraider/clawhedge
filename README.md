@@ -1,8 +1,6 @@
 # ClawHedge
 > The first hedged trading agent on Four.meme. One message. Two protocols. One atomic transaction.
 
-<!-- placeholder GIF — drop in after video recording -->
-
 ---
 
 ## The gap we fill
@@ -14,7 +12,7 @@ Every hackathon entry in this category is a long-only buyer. Meme trading withou
 ## How it works
 
 1. User messages the agent (WhatsApp, Telegram, Line — any Pieverse runtime)
-2. DGrid routes 3 different models: cheap triage → strong decision → cheap explain
+2. DGrid routes 3 different models: fast triage → strong decision → fast explain
 3. Pieverse TEE wallet signs
 4. One BSC tx calls Four.meme and Level Finance through our HedgedBuyer contract
 5. User sees BscScan link, tokens received, short open, max-loss cap enforced
@@ -25,19 +23,21 @@ Every hackathon entry in this category is a long-only buyer. Meme trading withou
 
 | Bounty | How ClawHedge hits it | Evidence |
 |---|---|---|
-| Main ($50K pool) | First hedged + atomic + multi-model agent in the field | See demo tx below |
+| Main ($50K pool) | First hedged + atomic + multi-model agent in the field | Contract + AI pipeline below |
 | Pieverse ($2K) | 7 skills live on Skill Store | [Links below](#skills-pieverse-skill-store) |
-| DGrid ($3K credits) | Multi-model routing: `claude-sonnet-4.6` triage + `claude-opus-4-5` decision + `claude-sonnet-4.6` explain — measurable call logs | `agent/src/dgrid.ts` |
-| Level Finance | First ClawHedge skill using Level Finance perp shorts via TEE | `contracts/src/interfaces/ILevelOrderManager.sol` |
+| DGrid ($3K credits) | Multi-model routing: `claude-sonnet-4.6` triage + `claude-opus-4-5` decision + `claude-sonnet-4.6` explain | `agent/src/dgrid.ts` |
+| Level Finance | Perp short via Level Finance OrderManager in atomic tx | `contracts/src/HedgedBuyer.sol:107` |
 
 ---
 
 ## Live artifacts
 
-- **Testnet HedgedBuyer**: [`0x0Ec3689BE28aB60cbDF400015440a2feB50205Ae`](https://testnet.bscscan.com/address/0x0Ec3689BE28aB60cbDF400015440a2feB50205Ae)
 - **Mainnet HedgedBuyer**: [`0x2084a2A9C23d9ba70f66bBEF7A91C6d202Bf478e`](https://bscscan.com/address/0x2084a2A9C23d9ba70f66bBEF7A91C6d202Bf478e)
-- **Real atomic hedged trade**: `[bscscan tx — placeholder]`
-- **Demo video**: `[YouTube link — placeholder]`
+- **Deploy tx**: [`0x167963fb12cba5bd15a97a1c4ada8db6b749ed9a95809630243f1dde6c6a2b07`](https://bscscan.com/tx/0x167963fb12cba5bd15a97a1c4ada8db6b749ed9a95809630243f1dde6c6a2b07)
+- **USDT approve tx**: [`0xb5425d600f57eff547346ed9cdd70fcefed028514ee432ac667ec6f8d97f69f5`](https://bscscan.com/tx/0xb5425d600f57eff547346ed9cdd70fcefed028514ee432ac667ec6f8d97f69f5)
+- **setCap tx**: [`0x53b5c5439a7e5b11350e10a8ee323db5053693a3b24fb266f8f7703c96279d09`](https://bscscan.com/tx/0x53b5c5439a7e5b11350e10a8ee323db5053693a3b24fb266f8f7703c96279d09)
+- **Live dashboard**: [clawhedge.vercel.app](https://clawhedge.vercel.app)
+- **Demo video**: `[YouTube link — add after recording]`
 
 ---
 
@@ -51,10 +51,9 @@ User message (any Pieverse runtime)
         ▼
 ┌─────────────────────────────────┐
 │         DGrid AI Brain          │
-│  qwen-flash  →  claude-sonnet   │
-│  (triage)       (decision)      │
-│         ↓                       │
-│  qwen-flash (explain to user)   │
+│  claude-sonnet-4.6  (triage)    │
+│  claude-opus-4-5    (decision)  │
+│  claude-sonnet-4.6  (explain)   │
 └──────────────┬──────────────────┘
                │
         Pieverse TEE Wallet
@@ -135,7 +134,7 @@ cd contracts && forge install && forge test --fork-url $BSC_RPC_URL
 
 # Agent dry-run
 cd ../agent && npm install
-npx tsx src/index.ts dry-run --user 0x889bf5f700f532950Ba67Be0B16eaB3378b992E1 --max-usdt 10
+npx tsx src/index.ts dry-run --user 0x9DE4b0aABB3Cd6B00A970dC6B2F30EB0CC457120 --max-usdt 10
 
 # Frontend
 cd ../frontend && npm install && npm run dev
@@ -147,10 +146,10 @@ cd ../frontend && npm install && npm run dev
 
 ## Honest limitations
 
-- Mainnet deploy pending final environment setup — testnet contract is fully functional
+- Atomic mainnet `hedgedBuy` tx requires Pieverse TEE wallet execution — TEE private key is managed by the enclave, not directly accessible. All pre-conditions (deploy, USDT approve, setCap) are confirmed on mainnet.
 - TEE attestation verification is trust-on-first-use via Pieverse runtime; enclave measurements not independently verified
 - Single chain (BSC). opBNB extension is a future increment
-- DGrid API requires funded account; dry-run falls back to mock action if balance is zero
+- DGrid API requires funded account; dry-run falls back to mock if balance is zero
 
 ---
 
