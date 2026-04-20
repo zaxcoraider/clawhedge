@@ -7,6 +7,16 @@ const TRIAGE_MODEL  = "anthropic/claude-sonnet-4.6";
 const DECIDE_MODEL  = "anthropic/claude-sonnet-4.6"; // sonnet for speed, opus was timing out
 const EXPLAIN_MODEL = "anthropic/claude-sonnet-4.6";
 
+/** Strip ```json ... ``` fences and parse — handles both raw JSON and markdown-wrapped responses */
+function parseJSON(raw: string): Record<string, unknown> {
+  const stripped = raw
+    .trim()
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/, "")
+    .trim();
+  return JSON.parse(stripped || "{}");
+}
+
 async function dgridChat(
   model: string,
   messages: { role: string; content: string }[],
@@ -69,7 +79,7 @@ export async function GET() {
           { role: "user", content: "Dry-run triage. Return criteria as JSON." },
         ], { response_format: { type: "json_object" } });
 
-        const triage = JSON.parse(t1.content || "{}") as {
+        const triage = parseJSON(t1.content) as {
           shortlistCount?: number; criteria?: string;
         };
         controller.enqueue(evt({
@@ -94,7 +104,7 @@ export async function GET() {
           },
         ], { response_format: { type: "json_object" } });
 
-        const decision = JSON.parse(t2.content || "{}") as {
+        const decision = parseJSON(t2.content) as {
           type?: string; reasoning?: string;
         };
         controller.enqueue(evt({
