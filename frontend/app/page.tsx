@@ -126,9 +126,50 @@ export default function Home() {
 
   const runDryRun = useCallback(async () => {
     setDryRunning(true);
+    setDryRun(null);
     try {
       const res = await fetch("/api/dry-run");
-      setDryRun(await res.json() as DryRunResult);
+      if (!res.body) throw new Error("No stream");
+      const reader  = res.body.getReader();
+      const decoder = new TextDecoder();
+      let   buf     = "";
+      const stages: Stage[] = [];
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buf += decoder.decode(value, { stream: true });
+        const lines = buf.split("\n\n");
+        buf = lines.pop() ?? "";
+
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          try {
+            const ev = JSON.parse(line.slice(6)) as Record<string, unknown>;
+            if (ev.stage === "done") {
+              setDryRun({
+                type:      String(ev.type ?? "HOLD"),
+                reasoning: String(ev.reasoning ?? ""),
+                summary:   String(ev.summary ?? ""),
+                simulated: Boolean(ev.simulated),
+                stages: [...stages],
+              });
+            } else if (ev.status === "done") {
+              stages.push({
+                name:      String(ev.stage),
+                action:    ev.action !== undefined ? String(ev.action) : undefined,
+                tokens:    ev.tokens !== undefined ? Number(ev.tokens) : undefined,
+                latencyMs: Number(ev.latencyMs ?? 0),
+              });
+              setDryRun({ type: "…", reasoning: "Running pipeline…", simulated: false, stages: [...stages] });
+            } else if (ev.stage === "error") {
+              setDryRun({ type: "ERROR", reasoning: String(ev.msg ?? "Unknown"), simulated: false, stages });
+            }
+          } catch { /* skip */ }
+        }
+      }
+    } catch (e) {
+      setDryRun({ type: "ERROR", reasoning: String(e), simulated: false, stages: [] });
     } finally { setDryRunning(false); }
   }, []);
 
