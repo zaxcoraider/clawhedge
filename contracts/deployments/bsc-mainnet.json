@@ -1,0 +1,10 @@
+{
+  "chainId": 56,
+  "HedgedBuyer": "0x2084a2A9C23d9ba70f66bBEF7A91C6d202Bf478e",
+  "deployTx": "0x167963fb12cba5bd15a97a1c4ada8db6b749ed9a95809630243f1dde6c6a2b07",
+  "deployedAt": "2026-04-20",
+  "teeAgent": "0x889bf5f700f532950Ba67Be0B16eaB3378b992E1",
+  "fourMeme": "0x5c952063c7fc8610FFDB798152D69F0B9550762b",
+  "levelOrderManager": "0xf584A17dF21Afd9de84F47842ECEAF6042b1Bb5b",
+  "usdt": "0x55d398326f99059fF775485246999027B3197955"
+}

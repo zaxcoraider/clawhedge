@@ -35,7 +35,7 @@ Every hackathon entry in this category is a long-only buyer. Meme trading withou
 ## Live artifacts
 
 - **Testnet HedgedBuyer**: [`0x0Ec3689BE28aB60cbDF400015440a2feB50205Ae`](https://testnet.bscscan.com/address/0x0Ec3689BE28aB60cbDF400015440a2feB50205Ae)
-- **Mainnet HedgedBuyer**: `[pending mainnet deploy]`
+- **Mainnet HedgedBuyer**: [`0x2084a2A9C23d9ba70f66bBEF7A91C6d202Bf478e`](https://bscscan.com/address/0x2084a2A9C23d9ba70f66bBEF7A91C6d202Bf478e)
 - **Real atomic hedged trade**: `[bscscan tx — placeholder]`
 - **Demo video**: `[YouTube link — placeholder]`
 
