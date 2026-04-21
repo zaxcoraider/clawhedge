@@ -24,7 +24,7 @@ Every hackathon entry in this category is a long-only buyer. Meme trading withou
 | Bounty | How ClawHedge hits it | Evidence |
 |---|---|---|
 | Main ($50K pool) | First hedged + atomic + multi-model agent in the field | Contract + AI pipeline below |
-| Pieverse ($2K) | 7 skills live on Skill Store | [Links below](#skills-pieverse-skill-store) |
+| Pieverse ($2K) | 7 skills live on Skill Store + Telegram bot live | [Links below](#skills-pieverse-skill-store) |
 | DGrid ($3K credits) | 3-stage Claude pipeline — triage / decision / explain via DGrid gateway | `agent/src/dgrid.ts` |
 | Level Finance | Perp short via Level Finance OrderManager in atomic tx | `contracts/src/HedgedBuyer.sol:107` |
 
@@ -55,27 +55,42 @@ Every hackathon entry in this category is a long-only buyer. Meme trading withou
 ![Architecture](docs/architecture.svg)
 
 ```
-User message (any Pieverse runtime)
-        │
-        ▼
-┌─────────────────────────────────┐
-│         DGrid AI Brain          │
-│  claude-sonnet-4.6  (triage)    │
-│  claude-sonnet-4.6  (decision)  │
-│  claude-sonnet-4.6  (explain)   │
-└──────────────┬──────────────────┘
-               │
-        Pieverse TEE Wallet
-        0x889b...992E1
-               │
-               ▼
-┌─────────────────────────────────┐
-│       HedgedBuyer.sol (BSC)     │
-│                                 │
-│  buyTokenAMAP() ──→ Four.meme   │
-│  placeOrder()   ──→ Level Fin.  │
-└─────────────────────────────────┘
+┌─────────────────────────────────────────────────────────┐
+│                     TWO AI LAYERS                       │
+│                                                         │
+│  Telegram Bot (@ClawHedge01bot)                         │
+│      │                                                  │
+│      ▼                                                  │
+│  Pieverse Hermes  ←── Anthropic API (claude-sonnet)     │
+│  (skill routing)       powers Telegram bot decisions    │
+│      │                                                  │
+│      ▼                                                  │
+│  clawhedge.vercel.app dashboard                         │
+│      │                                                  │
+│      ▼                                                  │
+│  DGrid AI Gateway ←── claude-sonnet-4.6 ×3             │
+│  TRIAGE → DECIDE → EXPLAIN                              │
+│  (powers frontend dry-run pipeline)                     │
+└───────────────────────────┬─────────────────────────────┘
+                            │
+                   Pieverse TEE Wallet
+                   0x810D01...D33d61
+                            │
+                            ▼
+             ┌──────────────────────────┐
+             │    HedgedBuyer.sol (BSC) │
+             │                          │
+             │  buyTokenAMAP() → Four.meme   │
+             │  placeOrder()   → Level Fin.  │
+             └──────────────────────────┘
 ```
+
+### AI Key Architecture
+
+| Layer | Provider | Key | Purpose |
+|---|---|---|---|
+| Telegram bot | Anthropic API | `sk-ant-...` | Pieverse Hermes routes skill decisions |
+| Dashboard pipeline | DGrid Gateway | `sk-b0cfb...` | 3-stage triage/decide/explain on frontend |
 
 ---
 
