@@ -3,6 +3,14 @@
 
 ---
 
+## Demo
+
+[![ClawHedge Demo](https://img.youtube.com/vi/aEf46mFYtnE/maxresdefault.jpg)](https://youtu.be/aEf46mFYtnE?si=QOgcmh46lRUnIqQX)
+
+▶️ **[Watch Full Demo on YouTube](https://youtu.be/aEf46mFYtnE?si=QOgcmh46lRUnIqQX)**
+
+---
+
 ## The gap we fill
 
 Every hackathon entry in this category is a long-only buyer. Meme trading without a short is a casino. ClawHedge is the first agent that ships both legs atomically — Four.meme buy + Level Finance perp short in a single BSC transaction.
@@ -11,9 +19,9 @@ Every hackathon entry in this category is a long-only buyer. Meme trading withou
 
 ## How it works
 
-1. User messages the agent (WhatsApp, Telegram, Line — any Pieverse runtime)
-2. DGrid routes 3 Claude models: triage → decision → explain
-3. Pieverse TEE wallet signs the transaction
+1. User messages the agent on Telegram (@ClawHedge01bot) or any Pieverse runtime
+2. DGrid routes 3 Claude Sonnet calls: triage → decision → explain
+3. Pieverse TEE wallet signs the transaction inside a secure hardware enclave
 4. One BSC tx calls Four.meme and Level Finance through our HedgedBuyer contract
 5. User sees BscScan link, tokens received, short open, max-loss cap enforced on-chain
 
@@ -32,12 +40,22 @@ Every hackathon entry in this category is a long-only buyer. Meme trading withou
 
 ## Live artifacts
 
-### Contract
+### Links
 | Item | Link |
 |---|---|
-| Mainnet HedgedBuyer | [`0x2084a2A9C23d9ba70f66bBEF7A91C6d202Bf478e`](https://bscscan.com/address/0x2084a2A9C23d9ba70f66bBEF7A91C6d202Bf478e) |
-| Live dashboard | [clawhedge.vercel.app](https://clawhedge.vercel.app) |
-| Demo video | `[YouTube link — add after recording]` |
+| 🌐 Live dashboard | [clawhedge.vercel.app](https://clawhedge.vercel.app) |
+| 🤖 Telegram bot | [@ClawHedge01bot](https://t.me/ClawHedge01bot) |
+| 📜 HedgedBuyer contract | [`0x2084a2A9C23d9ba70f66bBEF7A91C6d202Bf478e`](https://bscscan.com/address/0x2084a2A9C23d9ba70f66bBEF7A91C6d202Bf478e) |
+| 🎥 Demo video | [Watch on YouTube](https://youtu.be/aEf46mFYtnE?si=QOgcmh46lRUnIqQX) |
+| 💻 GitHub | [zaxcoraider/clawhedge](https://github.com/zaxcoraider/clawhedge) |
+
+### TEE Wallets (Pieverse Hardware Enclave)
+| Wallet | Address | Role |
+|---|---|---|
+| Primary TEE | [`0x810D01Fc22570f70a74fCC252F68f5367FD33d61`](https://bscscan.com/address/0x810D01Fc22570f70a74fCC252F68f5367FD33d61) | Active — signs all live transactions |
+| Previous TEE | [`0x889bf5f700f532950Ba67Be0B16eaB3378b992E1`](https://bscscan.com/address/0x889bf5f700f532950Ba67Be0B16eaB3378b992E1) | Retired — early dev transactions |
+
+> Both wallets are Pieverse TEE-managed — private keys never leave the hardware enclave. No seed phrase. No manual signing.
 
 ### Mainnet transactions
 | # | Tx | What it proves |
@@ -52,45 +70,45 @@ Every hackathon entry in this category is a long-only buyer. Meme trading withou
 
 ## Architecture
 
-![Architecture](docs/architecture.svg)
-
 ```
-┌─────────────────────────────────────────────────────────┐
-│                     TWO AI LAYERS                       │
-│                                                         │
-│  Telegram Bot (@ClawHedge01bot)                         │
-│      │                                                  │
-│      ▼                                                  │
-│  Pieverse Hermes  ←── Anthropic API (claude-sonnet)     │
-│  (skill routing)       powers Telegram bot decisions    │
-│      │                                                  │
-│      ▼                                                  │
-│  clawhedge.vercel.app dashboard                         │
-│      │                                                  │
-│      ▼                                                  │
-│  DGrid AI Gateway ←── claude-sonnet-4.6 ×3             │
-│  TRIAGE → DECIDE → EXPLAIN                              │
-│  (powers frontend dry-run pipeline)                     │
-└───────────────────────────┬─────────────────────────────┘
-                            │
-                   Pieverse TEE Wallet
-                   0x810D01...D33d61
-                            │
-                            ▼
-             ┌──────────────────────────┐
-             │    HedgedBuyer.sol (BSC) │
-             │                          │
-             │  buyTokenAMAP() → Four.meme   │
-             │  placeOrder()   → Level Fin.  │
-             └──────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│                        TWO AI LAYERS                         │
+│                                                              │
+│  User → Telegram (@ClawHedge01bot)                           │
+│              │                                               │
+│              ▼                                               │
+│  Pieverse Hermes ←── Platform AI (skill routing)             │
+│  clawhedge-scan skill calls:                                 │
+│  GET https://clawhedge.vercel.app/api/scan-simple            │
+│              │                                               │
+│              ▼                                               │
+│  clawhedge.vercel.app (Next.js dashboard)                    │
+│              │                                               │
+│              ▼                                               │
+│  DGrid AI Gateway ←── claude-sonnet-4.6 ×3                  │
+│  TRIAGE → DECIDE → EXPLAIN                                   │
+│  (powers frontend dry-run pipeline)                          │
+└──────────────────────────┬───────────────────────────────────┘
+                           │
+              Pieverse TEE Wallet (Hardware Enclave)
+              0x810D01Fc22570f70a74fCC252F68f5367FD33d61
+                           │
+                           ▼
+            ┌──────────────────────────────┐
+            │      HedgedBuyer.sol (BSC)   │
+            │                              │
+            │  buyTokenAMAP() → Four.meme  │
+            │  placeOrder()   → Level Fin. │
+            └──────────────────────────────┘
 ```
 
-### AI Key Architecture
+### AI Architecture
 
-| Layer | Provider | Key | Purpose |
-|---|---|---|---|
-| Telegram bot | Anthropic API | `sk-ant-...` | Pieverse Hermes routes skill decisions |
-| Dashboard pipeline | DGrid Gateway | `sk-b0cfb...` | 3-stage triage/decide/explain on frontend |
+| Layer | Provider | Purpose |
+|---|---|---|
+| Telegram bot | Pieverse Platform AI | Routes skill decisions, formats responses |
+| Scan API | Bitquery + GoPlus | Real-time token discovery + honeypot checks |
+| Dashboard pipeline | DGrid (claude-sonnet-4.6 ×3) | Triage → Decide → Explain AI pipeline |
 
 ---
 
@@ -105,6 +123,23 @@ Every hackathon entry in this category is a long-only buyer. Meme trading withou
 | `clawhedge-close-hedge` | Close Level Finance short, receive USDT | [View](https://www.pieverse.io/skill-store?skill=56075) |
 | `clawhedge-status` | View cap, positions, agent BNB balance | [View](https://www.pieverse.io/skill-store?skill=56077) |
 | `clawhedge-level-short` | Open Level Finance perp short via TEE | [View](https://www.pieverse.io/skill-store?skill=56079) |
+
+---
+
+## Telegram Bot
+
+**[@ClawHedge01bot](https://t.me/ClawHedge01bot)** — live on Telegram via Pieverse
+
+Try it:
+```
+scan                          → scan Four.meme for safe tokens
+clawhedge-scan                → same, explicit skill invocation
+```
+
+The bot calls `https://clawhedge.vercel.app/api/scan-simple` — a single endpoint that:
+1. Queries Bitquery for top 20 Four.meme tokens by 30-min volume
+2. Runs GoPlus honeypot checks on the top 5
+3. Returns clean JSON — symbol, volume, trades, safety flags, liquidity
 
 ---
 
@@ -131,7 +166,13 @@ clawhedge/
 │       ├── decisions.ts                   # orchestration pipeline
 │       ├── calldata.ts                    # ABI-encoded tx builder
 │       └── types.ts
-├── frontend/                              # Next.js live dashboard (Vercel)
+├── frontend/
+│   ├── app/
+│   │   ├── page.tsx                       # live dashboard UI
+│   │   └── api/
+│   │       ├── scan/route.ts              # SSE scan stream for dashboard
+│   │       ├── scan-simple/route.ts       # REST JSON endpoint for Telegram bot
+│   │       └── dry-run/route.ts           # SSE dry-run AI pipeline
 ├── skills/                                # Pieverse Skill Store packages
 │   ├── clawhedge/
 │   ├── clawhedge-scan/
@@ -143,6 +184,7 @@ clawhedge/
 ├── docs/
 │   ├── bounty-map.md
 │   ├── architecture.svg
+│   ├── recording-guide.md
 │   └── demo-script.md
 └── logo.svg
 ```
@@ -179,6 +221,8 @@ cd ../frontend && npm install && npm run dev
 | TEE wallet buying on Four.meme mainnet | ✅ Live (5 txs confirmed) |
 | HedgedBuyer contract deployed on BSC mainnet | ✅ Live |
 | 7 Pieverse skills on Skill Store | ✅ Live |
+| Telegram bot (@ClawHedge01bot) via Pieverse | ✅ Live |
+| REST scan API for Telegram bot | ✅ Live (`/api/scan-simple`) |
 | Level Finance atomic hedge in one tx | 🔧 Contract ready — needs `receive()` + redeploy |
 
 ---
@@ -196,7 +240,6 @@ cd ../frontend && npm install && npm run dev
 | **Auto-refresh scan** | Scan every 60s automatically, highlight new safe tokens |
 | **opBNB support** | Extend HedgedBuyer to opBNB chain |
 | **Stop-loss automation** | Auto-close Level Finance short when BNB recovers above entry |
-| **Telegram native bot** | Direct Telegram bot wrapping all 7 skills — no Pieverse app needed |
 
 ---
 
